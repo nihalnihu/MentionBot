@@ -179,8 +179,6 @@ async def broadcast_to_members(client, message):
             await message.reply("Usage: /broadcast <message> or reply to a photo, video, or sticker with /broadcast")
 
 
-
-
 @app.on_message(filters.command("start") & filters.private)
 async def start(client, message):
     user_id = message.from_user.id
@@ -196,24 +194,95 @@ async def users(client, message):
 @app.on_message(filters.command("bc") & filters.private & filters.user(OWNER_ID))
 async def broadcast(client, message):
     command_parts = message.text.split(maxsplit=1)
+    failed_count = 0
+    done_count = 0
 
-    if len(command_parts) > 1:
-        broadcast_message = command_parts[1]
-        user_ids = stats.get_all_user_ids()
+    if message.reply_to_message:
+        replied_message = message.reply_to_message
 
-        done_count = 0
-        failed_count = 0
-        for user_id in user_ids:
-            try:
-                await client.send_message(user_id, broadcast_message)
-                done_count += 1
-                await asyncio.sleep(1)
-            except Exception as e:
-                failed_count += 1
-                logger.error(f"Failed to send broadcast message to user {user_id}: {e}")
+        # Handle photo with or without caption
+        if replied_message.photo:
+            photo = replied_message.photo.file_id
+            caption = replied_message.caption or ""
 
-        await message.reply(f"Broadcast message sent to {done_count} users.\nFailed to send to {failed_count} users.")
+            # Send initial reply message
+            reply_message = await message.reply("Broadcasting photo...")
+
+            user_ids = stats.get_all_user_ids()
+            for user_id in user_ids:
+                try:
+                    await client.send_photo(user_id, photo, caption=caption)
+                    done_count += 1
+                    await asyncio.sleep(1)
+                except Exception as e:
+                    failed_count += 1
+                    logger.error(f"Failed to send photo to user {user_id}: {e}")
+
+            await reply_message.edit(f"Total Users: {done_count + failed_count}\nSuccessfully Sent: {done_count}\nFailed: {failed_count}")
+
+        # Handle video with or without caption
+        elif replied_message.video:
+            video = replied_message.video.file_id
+            caption = replied_message.caption or ""
+
+            # Send initial reply message
+            reply_message = await message.reply("Broadcasting video...")
+
+            user_ids = stats.get_all_user_ids()
+            for user_id in user_ids:
+                try:
+                    await client.send_video(user_id, video, caption=caption)
+                    done_count += 1
+                    await asyncio.sleep(1)
+                except Exception as e:
+                    failed_count += 1
+                    logger.error(f"Failed to send video to user {user_id}: {e}")
+
+            await reply_message.edit(f"Total Users: {done_count + failed_count}\nSuccessfully Sent: {done_count}\nFailed: {failed_count}")
+
+        # Handle sticker
+        elif replied_message.sticker:
+            sticker = replied_message.sticker.file_id
+
+            # Send initial reply message
+            reply_message = await message.reply("Broadcasting sticker...")
+
+            user_ids = stats.get_all_user_ids()
+            for user_id in user_ids:
+                try:
+                    await client.send_sticker(user_id, sticker)
+                    done_count += 1
+                    await asyncio.sleep(1)
+                except Exception as e:
+                    failed_count += 1
+                    logger.error(f"Failed to send sticker to user {user_id}: {e}")
+
+            await reply_message.edit(f"Total Users: {done_count + failed_count}\nSuccessfully Sent: {done_count}\nFailed: {failed_count}")
+
+        else:
+            await message.reply("The replied message must be a photo, video, or sticker.")
+
     else:
-        await message.reply("Usage: /bc <message>")
+        if len(command_parts) > 1:
+            custom_message = command_parts[1]
+
+            # Send initial reply message
+            reply_message = await message.reply("Broadcasting text message...")
+
+            user_ids = stats.get_all_user_ids()
+            for user_id in user_ids:
+                try:
+                    await client.send_message(user_id, custom_message)
+                    done_count += 1
+                    await asyncio.sleep(1)
+                except Exception as e:
+                    failed_count += 1
+                    logger.error(f"Failed to send message to user {user_id}: {e}")
+
+            await reply_message.edit(f"Total Users: {done_count + failed_count}\nSuccessfully Sent: {done_count}\nFailed: {failed_count}")
+
+        else:
+            await message.reply("Usage: /bc <message> or reply to a photo, video, or sticker with /bc")
+
 
 app.run()
