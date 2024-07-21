@@ -67,6 +67,8 @@ async def mention(client, message):
             await message.reply(full_message)
             await asyncio.sleep(1)
 
+
+
 @app.on_message(filters.command("broadcast") & filters.group)
 async def broadcast_to_members(client, message):
     chat_id = message.chat.id
@@ -89,6 +91,9 @@ async def broadcast_to_members(client, message):
         text = replied_message.text or ""
         caption = replied_message.caption or ""
 
+        media_type = None
+        media = None
+
         if replied_message.photo:
             media_type = "photo"
             media = (replied_message.photo.file_id, caption)
@@ -102,47 +107,46 @@ async def broadcast_to_members(client, message):
             media_type = "text"
             media = (text,)
 
-        if reply_markup:
-            reply_message = await message.reply(f"Broadcasting {media_type} with buttons...")
+        reply_message = await message.reply(f"Broadcasting {media_type}...")
 
-            async for member in app.get_chat_members(chat_id):
-                if not member.user.is_bot:
-                    try:
-                        if media_type == "photo":
-                            await client.send_photo(
-                                member.user.id,
-                                media[0],
-                                caption=media[1],
-                                reply_markup=reply_markup
-                            )
-                        elif media_type == "video":
-                            await client.send_video(
-                                member.user.id,
-                                media[0],
-                                caption=media[1],
-                                reply_markup=reply_markup
-                            )
-                        elif media_type == "sticker":
-                            await client.send_sticker(
-                                member.user.id,
-                                media[0],
-                                reply_markup=reply_markup
-                            )
-                        elif media_type == "text":
-                            await client.send_message(
-                                member.user.id,
-                                media[0],
-                                reply_markup=reply_markup
-                            )
-                        done_count += 1
-                        await asyncio.sleep(1)  # To avoid hitting rate limits
-                    except Exception as e:
-                        failed_count += 1
-                        logger.error(f"Failed to send {media_type} with buttons to user {member.user.id}: {e}")
+        async for member in app.get_chat_members(chat_id):
+            if not member.user.is_bot:
+                try:
+                    if media_type == "photo":
+                        if caption and reply_markup:
+                            await client.send_photo(member.user.id, media[0], caption=media[1], reply_markup=reply_markup)
+                        elif caption:
+                            await client.send_photo(member.user.id, media[0], caption=media[1])
+                        elif reply_markup:
+                            await client.send_photo(member.user.id, media[0], reply_markup=reply_markup)
+                        else:
+                            await client.send_photo(member.user.id, media[0])
+                    elif media_type == "video":
+                        if caption and reply_markup:
+                            await client.send_video(member.user.id, media[0], caption=media[1], reply_markup=reply_markup)
+                        elif caption:
+                            await client.send_video(member.user.id, media[0], caption=media[1])
+                        elif reply_markup:
+                            await client.send_video(member.user.id, media[0], reply_markup=reply_markup)
+                        else:
+                            await client.send_video(member.user.id, media[0])
+                    elif media_type == "sticker":
+                        if reply_markup:
+                            await client.send_sticker(member.user.id, media[0], reply_markup=reply_markup)
+                        else:
+                            await client.send_sticker(member.user.id, media[0])
+                    elif media_type == "text":
+                        if reply_markup:
+                            await client.send_message(member.user.id, media[0], reply_markup=reply_markup)
+                        else:
+                            await client.send_message(member.user.id, media[0])
+                    done_count += 1
+                    await asyncio.sleep(1)  # To avoid hitting rate limits
+                except Exception as e:
+                    failed_count += 1
+                    logger.error(f"Failed to send {media_type} to user {member.user.id}: {e}")
 
-            await reply_message.edit(f"Total Members: {done_count + failed_count}\nSuccessfully Sent: {done_count}\nFailed: {failed_count}")
-        else:
-            await message.reply("The replied message must contain buttons.")
+        await reply_message.edit(f"Total Members: {done_count + failed_count}\nSuccessfully Sent: {done_count}\nFailed: {failed_count}")
 
     else:
         command_parts = message.text.split(maxsplit=1)
@@ -166,17 +170,10 @@ async def broadcast_to_members(client, message):
         else:
             await message.reply("Usage: /broadcast <message> or reply to a photo, video, or sticker with /broadcast")
 
-@app.on_message(filters.command("start") & filters.private)
-async def start(client, message):
-    user_id = message.from_user.id
-    username = message.from_user.mention
-    stats.add_user(user_id)
-    await message.reply(f"Hello {username}! Use /mention <message> in a group to mention all members with a custom message.\nUse /broadcast <message> in a group to send a custom message to all group members via private message.")
 
-@app.on_message(filters.command("users") & filters.private & filters.user(OWNER_ID))
-async def users(client, message):
-    user_count = stats.get_user_count()
-    await message.reply(f"Users: {user_count}\nGroups: 0")
+
+
+
 
 @app.on_message(filters.command("bc") & filters.private & filters.user(OWNER_ID))
 async def broadcast(client, message):
