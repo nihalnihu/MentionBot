@@ -168,7 +168,7 @@ async def broadcast_to_members(client, message):
 
 
 @app.on_message(filters.command("bc") & filters.private & filters.user(OWNER_ID))
-async def broadcast(client, message):
+async def broadcast_to_all_users(client, message):
     command_parts = message.text.split(maxsplit=1)
     failed_count = 0
     done_count = 0
@@ -195,95 +195,46 @@ async def broadcast(client, message):
             media_type = "text"
             media = (text,)
 
-        if reply_markup:
-            reply_message = await message.reply(f"Broadcasting {media_type} with buttons...")
+        reply_message = await message.reply(f"Broadcasting {media_type}...")
 
-            user_ids = stats.get_all_user_ids()
-            for user_id in user_ids:
-                try:
-                    if media_type == "photo":
-                        if caption and reply_markup:
-                            await client.send_photo(
-                                user_id,
-                                media[0],
-                                caption=media[1],
-                                reply_markup=reply_markup
-                            )
-                        elif caption:
-                            await client.send_photo(
-                                user_id,
-                                media[0],
-                                caption=media[1]
-                            )
-                        elif reply_markup:
-                            await client.send_photo(
-                                user_id,
-                                media[0],
-                                reply_markup=reply_markup
-                            )
-                        else:
-                            await client.send_photo(
-                                user_id,
-                                media[0]
-                            )
-                    elif media_type == "video":
-                        if caption and reply_markup:
-                            await client.send_video(
-                                user_id,
-                                media[0],
-                                caption=media[1],
-                                reply_markup=reply_markup
-                            )
-                        elif caption:
-                            await client.send_video(
-                                user_id,
-                                media[0],
-                                caption=media[1]
-                            )
-                        elif reply_markup:
-                            await client.send_video(
-                                user_id,
-                                media[0],
-                                reply_markup=reply_markup
-                            )
-                        else:
-                            await client.send_video(
-                                user_id,
-                                media[0]
-                            )
-                    elif media_type == "sticker":
-                        if reply_markup:
-                            await client.send_sticker(
-                                user_id,
-                                media[0],
-                                reply_markup=reply_markup
-                            )
-                        else:
-                            await client.send_sticker(
-                                user_id,
-                                media[0]
-                            )
-                    elif media_type == "text":
-                        if reply_markup:
-                            await client.send_message(
-                                user_id,
-                                media[0],
-                                reply_markup=reply_markup
-                            )
-                        else:
-                            await client.send_message(
-                                user_id,
-                                media[0]
-                            )
-                    done_count += 1
-                    await asyncio.sleep(1)  # To avoid hitting rate limits
-                except Exception as e:
-                    failed_count += 1
-                    logger.error(f"Failed to send {media_type} to user {user_id}: {e}")
+        user_ids = stats.get_all_user_ids()
+        for user_id in user_ids:
+            try:
+                if media_type == "photo":
+                    if caption and reply_markup:
+                        await client.send_photo(user_id, media[0], caption=media[1], reply_markup=reply_markup)
+                    elif caption:
+                        await client.send_photo(user_id, media[0], caption=media[1])
+                    elif reply_markup:
+                        await client.send_photo(user_id, media[0], reply_markup=reply_markup)
+                    else:
+                        await client.send_photo(user_id, media[0])
+                elif media_type == "video":
+                    if caption and reply_markup:
+                        await client.send_video(user_id, media[0], caption=media[1], reply_markup=reply_markup)
+                    elif caption:
+                        await client.send_video(user_id, media[0], caption=media[1])
+                    elif reply_markup:
+                        await client.send_video(user_id, media[0], reply_markup=reply_markup)
+                    else:
+                        await client.send_video(user_id, media[0])
+                elif media_type == "sticker":
+                    if reply_markup:
+                        await client.send_sticker(user_id, media[0], reply_markup=reply_markup)
+                    else:
+                        await client.send_sticker(user_id, media[0])
+                elif media_type == "text":
+                    if reply_markup:
+                        await client.send_message(user_id, media[0], reply_markup=reply_markup)
+                    else:
+                        await client.send_message(user_id, media[0])
+                done_count += 1
+                await asyncio.sleep(1)  # To avoid hitting rate limits
+            except Exception as e:
+                failed_count += 1
+                logger.error(f"Failed to send {media_type} to user {user_id}: {e}")
 
-            await reply_message.edit(f"Total Users: {done_count + failed_count}\nSuccessfully Sent: {done_count}\nFailed: {failed_count}")
-        else:
-            await message.reply("The replied message must contain buttons.")
+        await reply_message.edit(f"Total Users: {done_count + failed_count}\nSuccessfully Sent: {done_count}\nFailed: {failed_count}")
     else:
         if len(command_parts) > 1:
             custom_message = command_parts[1]
@@ -302,6 +253,8 @@ async def broadcast(client, message):
             await reply_message.edit(f"Total Users: {done_count + failed_count}\nSuccessfully Sent: {done_count}\nFailed: {failed_count}")
         else:
             await message.reply("Usage: /bc <message> or reply to a photo, video, or sticker with /bc")
+
+
 
 
 
