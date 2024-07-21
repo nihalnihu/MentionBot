@@ -68,32 +68,118 @@ async def mention(client, message):
             await message.reply(full_message)
             await asyncio.sleep(1)
 
+
+
 @app.on_message(filters.command("broadcast") & filters.group)
 async def broadcast_to_members(client, message):
     chat_id = message.chat.id
-    command_parts = message.text.split(maxsplit=1)
+    user_id = message.from_user.id
+    failed_count = 0
+    done_count = 0
+    
 
-    if len(command_parts) > 1:
-        custom_message = command_parts[1]
+    logger.info(f"Chat ID: {chat_id}, User ID: {user_id}")
 
-        reply_message = await message.reply("Getting...")
+    # Check if the user is an admin or the chat creator
+    is_admin = await is_user_admin(chat_id, user_id)
+    logger.info(f"User admin status: {is_admin}")
 
-        failed_count = 0
-        done_count = 0
+    if not is_admin:
+        await message.delete()
+        return
+    # Check if the message is a reply
+    if message.reply_to_message:
+        replied_message = message.reply_to_message
 
-        async for member in app.get_chat_members(chat_id):
-            if not member.user.is_bot:
-                try:
-                    await client.send_message(member.user.id, custom_message)
-                    done_count += 1
-                    await asyncio.sleep(1)
-                except Exception as e:
-                    failed_count += 1
-                    logger.error(f"Failed to send message to user {member.user.id}: {e}")
+        # Handle photo with or without caption
+        if replied_message.photo:
+            photo = replied_message.photo.file_id
+            caption = replied_message.caption or ""
 
-        await reply_message.edit(f"Total Members: {done_count + failed_count}\nSuccessfully Sent: {done_count}\nFailed: {failed_count}")
+            # Send initial reply message
+            reply_message = await message.reply("Broadcasting photo...")
+
+            async for member in app.get_chat_members(chat_id):
+                if not member.user.is_bot:
+                    try:
+                        await client.send_photo(member.user.id, photo, caption=caption)
+                        done_count += 1
+                        await asyncio.sleep(1)
+                    except Exception as e:
+                        failed_count += 1
+                        logger.error(f"Failed to send photo to user {member.user.id}: {e}")
+
+            await reply_message.edit(f"Total Members: {done_count + failed_count}\nSuccessfully Sent: {done_count}\nFailed: {failed_count}")
+
+        # Handle video with or without caption
+        elif replied_message.video:
+            video = replied_message.video.file_id
+            caption = replied_message.caption or ""
+
+            # Send initial reply message
+            reply_message = await message.reply("Broadcasting video...")
+
+            async for member in app.get_chat_members(chat_id):
+                if not member.user.is_bot:
+                    try:
+                        await client.send_video(member.user.id, video, caption=caption)
+                        done_count += 1
+                        await asyncio.sleep(1)
+                    except Exception as e:
+                        failed_count += 1
+                        logger.error(f"Failed to send video to user {member.user.id}: {e}")
+
+            await reply_message.edit(f"Total Members: {done_count + failed_count}\nSuccessfully Sent: {done_count}\nFailed: {failed_count}")
+
+        # Handle sticker
+        elif replied_message.sticker:
+            sticker = replied_message.sticker.file_id
+
+            # Send initial reply message
+            reply_message = await message.reply("Broadcasting sticker...")
+
+            async for member in app.get_chat_members(chat_id):
+                if not member.user.is_bot:
+                    try:
+                        await client.send_sticker(member.user.id, sticker)
+                        done_count += 1
+                        await asyncio.sleep(1)
+                    except Exception as e:
+                        failed_count += 1
+                        logger.error(f"Failed to send sticker to user {member.user.id}: {e}")
+
+            await reply_message.edit(f"Total Members: {done_count + failed_count}\nSuccessfully Sent: {done_count}\nFailed: {failed_count}")
+
+        else:
+            await message.reply("The replied message must be a photo, video, or sticker.")
+
     else:
-        await message.reply("Usage: /broadcast <message>")
+        # If not a reply, handle as text broadcast
+        command_parts = message.text.split(maxsplit=1)
+
+        if len(command_parts) > 1:
+            custom_message = command_parts[1]
+
+            # Send initial reply message
+            reply_message = await message.reply("Broadcasting text message...")
+
+            async for member in app.get_chat_members(chat_id):
+                if not member.user.is_bot:
+                    try:
+                        await client.send_message(member.user.id, custom_message)
+                        done_count += 1
+                        await asyncio.sleep(1)
+                    except Exception as e:
+                        failed_count += 1
+                        logger.error(f"Failed to send message to user {member.user.id}: {e}")
+
+            await reply_message.edit(f"Total Members: {done_count + failed_count}\nSuccessfully Sent: {done_count}\nFailed: {failed_count}")
+
+        else:
+            await message.reply("Usage: /broadcast <message> or reply to a photo, video, or sticker with /broadcast")
+
+
+
 
 @app.on_message(filters.command("start") & filters.private)
 async def start(client, message):
