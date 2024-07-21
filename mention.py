@@ -3,15 +3,12 @@ import asyncio
 import logging
 import stats
 
-api_id = 25731065                                          
+api_id = 25731065
 api_hash = 'be534fb5a5afd8c3308c9ca92afde672'
-bot_token = '6865008064:AAHfTdmqXhrd-P-2Og2Mu-I5z9_Rh9WQMCY'                                                          
-OWNER_ID = 7220858548
+bot_token = '6865008064:AAHfTdmqXhrd-P-2Og2Mu-I5z9_Rh9WQMCY'                                                          OWNER_ID = 7220858548
 
-logging.basicConfig(level=logging.INFO)                    
-logger = logging.getLogger(__name__)
-
-# Initialize the bot
+logging.basicConfig(level=logging.INFO)                    logger = logging.getLogger(__name__)
+                                                           # Initialize the bot
 app = Client("mention_bot", api_id=api_id, api_hash=api_hash, bot_token=bot_token)
 
 async def is_user_admin(chat_id, user_id):
@@ -170,9 +167,6 @@ async def broadcast_to_members(client, message):
 
 
 
-
-
-
 @app.on_message(filters.command("bc") & filters.private & filters.user(OWNER_ID))
 async def broadcast(client, message):
     command_parts = message.text.split(maxsplit=1)
@@ -184,6 +178,9 @@ async def broadcast(client, message):
         reply_markup = replied_message.reply_markup
         text = replied_message.text or ""
         caption = replied_message.caption or ""
+
+        media_type = None
+        media = None
 
         if replied_message.photo:
             media_type = "photo"
@@ -205,41 +202,88 @@ async def broadcast(client, message):
             for user_id in user_ids:
                 try:
                     if media_type == "photo":
-                        await client.send_photo(
-                            user_id,
-                            media[0],
-                            caption=media[1],
-                            reply_markup=reply_markup
-                        )
+                        if caption and reply_markup:
+                            await client.send_photo(
+                                user_id,
+                                media[0],
+                                caption=media[1],
+                                reply_markup=reply_markup
+                            )
+                        elif caption:
+                            await client.send_photo(
+                                user_id,
+                                media[0],
+                                caption=media[1]
+                            )
+                        elif reply_markup:
+                            await client.send_photo(
+                                user_id,
+                                media[0],
+                                reply_markup=reply_markup
+                            )
+                        else:
+                            await client.send_photo(
+                                user_id,
+                                media[0]
+                            )
                     elif media_type == "video":
-                        await client.send_video(
-                            user_id,
-                            media[0],
-                            caption=media[1],
-                            reply_markup=reply_markup
-                        )
+                        if caption and reply_markup:
+                            await client.send_video(
+                                user_id,
+                                media[0],
+                                caption=media[1],
+                                reply_markup=reply_markup
+                            )
+                        elif caption:
+                            await client.send_video(
+                                user_id,
+                                media[0],
+                                caption=media[1]
+                            )
+                        elif reply_markup:
+                            await client.send_video(
+                                user_id,
+                                media[0],
+                                reply_markup=reply_markup
+                            )
+                        else:
+                            await client.send_video(
+                                user_id,
+                                media[0]
+                            )
                     elif media_type == "sticker":
-                        await client.send_sticker(
-                            user_id,
-                            media[0],
-                            reply_markup=reply_markup
-                        )
+                        if reply_markup:
+                            await client.send_sticker(
+                                user_id,
+                                media[0],
+                                reply_markup=reply_markup
+                            )
+                        else:
+                            await client.send_sticker(
+                                user_id,
+                                media[0]
+                            )
                     elif media_type == "text":
-                        await client.send_message(
-                            user_id,
-                            media[0],
-                            reply_markup=reply_markup
-                        )
+                        if reply_markup:
+                            await client.send_message(
+                                user_id,
+                                media[0],
+                                reply_markup=reply_markup
+                            )
+                        else:
+                            await client.send_message(
+                                user_id,
+                                media[0]
+                            )
                     done_count += 1
                     await asyncio.sleep(1)  # To avoid hitting rate limits
                 except Exception as e:
                     failed_count += 1
-                    logger.error(f"Failed to send {media_type} with buttons to user {user_id}: {e}")
+                    logger.error(f"Failed to send {media_type} to user {user_id}: {e}")
 
             await reply_message.edit(f"Total Users: {done_count + failed_count}\nSuccessfully Sent: {done_count}\nFailed: {failed_count}")
         else:
             await message.reply("The replied message must contain buttons.")
-
     else:
         if len(command_parts) > 1:
             custom_message = command_parts[1]
@@ -256,9 +300,10 @@ async def broadcast(client, message):
                     logger.error(f"Failed to send message to user {user_id}: {e}")
 
             await reply_message.edit(f"Total Users: {done_count + failed_count}\nSuccessfully Sent: {done_count}\nFailed: {failed_count}")
-
         else:
             await message.reply("Usage: /bc <message> or reply to a photo, video, or sticker with /bc")
+
+
 
 @app.on_message(filters.command("start") & filters.private)
 async def start(client, message):
