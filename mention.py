@@ -1,17 +1,12 @@
-
 from pyrogram import Client, filters, enums
 import asyncio
 import logging
 import stats
 
-api_id = 25731065
-api_hash = 'be534fb5a5afd8c3308c9ca92afde672'
-bot_token = '6865008064:AAHfTdmqXhrd-P-2Og2Mu-I5z9_Rh9WQMCY'
-OWNER_ID = 7220858548
-
-# Initialize logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+api_id = 25731065                                          api_hash = 'be534fb5a5afd8c3308c9ca92afde672'
+bot_token = '6865008064:AAHfTdmqXhrd-P-2Og2Mu-I5z9_Rh9WQMCY'                                                          OWNER_ID = 7220858548
+                                                           # Initialize logging
+logging.basicConfig(level=logging.INFO)                    logger = logging.getLogger(__name__)
 
 # Initialize the bot
 app = Client("mention_bot", api_id=api_id, api_hash=api_hash, bot_token=bot_token)
@@ -261,6 +256,20 @@ async def broadcast(client, message):
 
         else:
             await message.reply("Usage: /bc <message> or reply to a photo, video, or sticker with /bc")
+
+@app.on_message(filters.command("start") & filters.private)
+async def start(client, message):
+    user_id = message.from_user.id
+    username = message.from_user.mention
+    stats.add_user(user_id)
+    await message.reply(f"Hello {username}! Use /mention <message> in a group to mention all members with a custom message.\nUse /broadcast <message> in a group to send a custom message to all group members via private message.")
+
+
+@app.on_message(filters.command("users") & filters.private & filters.user(OWNER_ID))
+async def users(client, message):
+    user_count = stats.get_user_count()
+    await message.reply(f"Users: {user_count}")
+
 
 
 app.run()
