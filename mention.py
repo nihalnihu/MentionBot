@@ -6,7 +6,7 @@ import stats
 api_id = 25731065
 api_hash = 'be534fb5a5afd8c3308c9ca92afde672'
 bot_token = '6865008064:AAHfTdmqXhrd-P-2Og2Mu-I5z9_Rh9WQMCY'
-
+OWNER_ID = 7220858548
 # Initialize logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -15,7 +15,6 @@ logger = logging.getLogger(__name__)
 app = Client("mention_bot", api_id=api_id, api_hash=api_hash, bot_token=bot_token)
 
 async def is_user_admin(chat_id, user_id):
-    """Check if a user is an admin or owner of the chat."""
     try:
         chat_member = await app.get_chat_member(chat_id, user_id)
         status = chat_member.status
@@ -32,7 +31,6 @@ async def is_user_admin(chat_id, user_id):
 
 @app.on_message(filters.command("mention") & filters.group)
 async def mention(client, message):
-    """Handle the /mention command."""
     user_id = message.from_user.id
     chat_id = message.chat.id
 
@@ -43,7 +41,7 @@ async def mention(client, message):
     logger.info(f"User admin status: {is_admin}")
 
     if not is_admin:
-        await message.reply("You need to be an admin to use this command.")
+        await message.delete()
         return
 
     # Your logic to handle mentions
@@ -66,7 +64,7 @@ async def mention(client, message):
         # Create the mention part of the message
         mention_chunks = [", ".join(mentions[i:i + 5]) for i in range(0, len(mentions), 5)]
         for chunk in mention_chunks:
-            full_message = f"{custom_message}\n{chunk}"
+            full_message = f"{custom_message}\n\n{chunk}"
             await message.reply(full_message)
             await asyncio.sleep(2)  # Wait for 2 seconds between messages
     else:
@@ -77,8 +75,8 @@ async def mention(client, message):
             await message.reply(full_message)
             await asyncio.sleep(1)  # Wait for 1 second between messages
 
-@app.on_message(filters.command("dm_msg") & filters.group)
-async def dm_msg(client, message):
+@app.on_message(filters.command("broadcast") & filters.group)
+async def broadcast_to_members(client, message):
     chat_id = message.chat.id
     command_parts = message.text.split(maxsplit=1)
 
@@ -106,18 +104,19 @@ async def dm_msg(client, message):
                     logger.error(f"Failed to send message to user {member.user.id}: {e}")
 
         # Update the reply message with the counts
-        await reply_message.edit(f"Total members contacted: {done_count + failed_count}\nDone: {done_count}\nFailed: {failed_count}")
+        await reply_message.edit(f"Total Members: {done_count + failed_count}\nSuccessfully Sended: {done_count}\nFailed: {failed_count}")
     else:
-        await message.reply("Usage: /dm_msg <message>")
+        await message.reply("Usage: /broadcast <message>")
 
 @app.on_message(filters.command("start") & filters.private)
 async def start(client, message):
     user_id = message.from_user.id
+    username = message.from_user.mention
     # Add user to stats
     stats.add_user(user_id)
-    await message.reply("Hello! Use /mention <mention message> in a group to mention all members with a custom message.\nUse /dm_msg <message> in a group to send a custom message to all group members via private message.")
+    await message.reply(f"Hello {username}! Use /mention <message> in a group to mention all members with a custom message.\nUse /broadcast <message> in a group to send a custom message to all group members via private message.")
 
-@app.on_message(filters.command("users") & filters.private)
+@app.on_message(filters.command("users") & filters.private & filters.user(OWNER_ID))
 async def users(client, message):
     # Get the user count from stats.py
     user_count = stats.get_user_count()
@@ -125,7 +124,7 @@ async def users(client, message):
     # Reply with the user count
     await message.reply(f"Users: {user_count}\nGroups: 0")
 
-@app.on_message(filters.command("broadcast") & filters.private)
+@app.on_message(filters.command("bc") & filters.private & filters.user(OWNER_ID)
 async def broadcast(client, message):
     command_parts = message.text.split(maxsplit=1)
 
