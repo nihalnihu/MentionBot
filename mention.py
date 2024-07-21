@@ -5,8 +5,9 @@ import stats
 
 api_id = 25731065                                          
 api_hash = 'be534fb5a5afd8c3308c9ca92afde672'
-bot_token = '6865008064:AAHfTdmqXhrd-P-2Og2Mu-I5z9_Rh9WQMCY'                                                          OWNER_ID = 7220858548
-                                                           # Initialize logging
+bot_token = '6865008064:AAHfTdmqXhrd-P-2Og2Mu-I5z9_Rh9WQMCY'                                                          
+OWNER_ID = 7220858548
+
 logging.basicConfig(level=logging.INFO)                    
 logger = logging.getLogger(__name__)
 
