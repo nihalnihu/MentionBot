@@ -2,12 +2,15 @@ from pyrogram import Client, filters, enums
 import asyncio
 import logging
 import stats
+from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup, CallbackQuery
 
 api_id = 25731065
 api_hash = 'be534fb5a5afd8c3308c9ca92afde672'
-bot_token = '6865008064:AAHfTdmqXhrd-P-2Og2Mu-I5z9_Rh9WQMCY'                                                          OWNER_ID = 7220858548
+bot_token = '6865008064:AAHfTdmqXhrd-P-2Og2Mu-I5z9_Rh9WQMCY'                                                          
+OWNER_ID = 7220858548
 
-logging.basicConfig(level=logging.INFO)                    logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)                    
+logger = logging.getLogger(__name__)
                                                            # Initialize the bot
 app = Client("mention_bot", api_id=api_id, api_hash=api_hash, bot_token=bot_token)
 
@@ -255,15 +258,72 @@ async def broadcast_to_all_users(client, message):
             await message.reply("Usage: /bc <message> or reply to a photo, video, or sticker with /bc")
 
 
+START_BTN = [
+    [InlineKeyboardButton("ᴀᴅᴅ ᴍᴇ ᴛᴏ ʏᴏᴜʀ ɢʀᴏᴜᴘ", url="https://t.me/TG_GRPMentionBot?startgroup=true")],
 
+    [InlineKeyboardButton("Help", callback_data="HELP"),
+    InlineKeyboardButton("Developer", url="t.me/nihh_alll")],
+    
+    [InlineKeyboardButton("Updates", url="t.me/TG_BotCreator")]
+]
 
+HELP_MSG = """ 
 
+ʏᴏᴜ ᴄᴀɴ ᴏɴʟʏ ᴜsᴇ ᴛʜɪs ʙᴏᴛ ɪɴ ʏᴏᴜʀ ɢʀᴏᴜᴘ
+
+ɢʀᴏᴜᴘ ᴄᴏᴍᴍᴀɴᴅs:
+
+/mention (ғᴏʀ ɢʀᴏᴜᴘ ᴀᴅᴍɪɴs) - ᴍᴇɴᴛɪᴏɴ ᴀʟʟ ɢʀᴏᴜᴘ ᴍᴇᴍʙᴇʀs. sᴇɴᴅ ᴛʜᴇ ᴄᴏᴍᴍᴀɴᴅ ᴀʟᴏɴᴇ ᴏʀ ʏᴏᴜ ᴄᴀɴ sᴇᴛ ᴀ ᴍᴇssᴀɢᴇ 
+
+ᴇɢ:- /mention Halo Guys
+
+/broadcast (ғᴏʀ ɢʀᴏᴜᴘ ᴀᴅᴍɪɴs) - sᴇɴᴅ ᴀ ᴍᴇssᴀɢᴇ ᴛᴏ ᴀʟʟ ɢʀᴏᴜᴘ ᴍᴇᴍʙᴇʀs (ᴘʀɪᴠᴀᴛʟʏ)
+
+ᴇɢ:- /broadcast Halo Guys
+
+‌ｏｒ ʀᴇᴘʟʏ ᴛᴏ ᴀ ᴘʜᴏᴛᴏ, ᴠɪᴅᴇᴏ, sᴛɪᴄᴋᴇʀ. ʙᴜᴛᴛᴏɴ ᴀɴᴅ ᴄᴀᴘᴛɪᴏɴ sᴜᴘᴘᴏʀᴛᴇᴅ!
+
+"""
+
+ADD_ME =  [[
+    InlineKeyboardButton("ᴀᴅᴅ ᴍᴇ ᴛᴏ ʏᴏᴜʀ ɢʀᴏᴜᴘ", url="https://t.me/TG_GRPMentionBot?startgroup=true")
+    ],[
+        InlineKeyboardButton("Close", callback_data="CLOSE")
+    ]
+    ]
+            
+
+START_TXT = """
+ʜʏ {},
+
+ᴛʜɪs ɪs ᴀ ᴍᴇɴᴛɪᴏɴ ʙᴏᴛ. ɪɴ ᴛʜɪs ʙᴏᴛ ʏᴏᴜ ᴄᴀɴ ᴍᴇɴᴛɪᴏɴ ᴀʟʟ ɢʀᴏᴜᴘ ᴍᴇᴍʙᴇʀs ᴀɴᴅ ᴀʟsᴏ ʏᴏᴜ ᴄᴀɴ sᴇɴᴅ ᴀ ʙʀᴏᴀᴅᴄᴀsᴛ ᴍᴇssᴀɢᴇ ᴛᴏ ᴀʟʟ ɢʀᴏᴜᴘ ᴍᴇᴍʙᴇʀs ɪɴ ᴘʀɪᴠᴀᴛᴇ.
+
+ᴄʟɪᴄᴋ ᴛʜᴇ ʜᴇʟᴘ ʙᴜᴛᴛᴏɴ ᴛᴏ ᴋɴᴏᴡ ᴍᴏʀᴇ!
+
+"""
 @app.on_message(filters.command("start") & filters.private)
 async def start(client, message):
     user_id = message.from_user.id
     username = message.from_user.mention
     stats.add_user(user_id)
-    await message.reply(f"Hello {username}! Use /mention <message> in a group to mention all members with a custom message.\nUse /broadcast <message> in a group to send a custom message to all group members via private message.")
+    await message.reply_text(
+        text=START_TXT.format(username),
+        reply_markup=InlineKeyboardMarkup(START_BTN)
+    )
+
+
+@app.on_callback_query()
+async def callback(bot, query):
+    data = query.data
+    if data == 'HELP':
+        await query.edit_message_text(
+            text=HELP_MSG,
+            reply_markup=InlineKeyboardMarkup(ADD_ME)
+        
+        )
+
+    elif data == 'CLOSE':
+        await query.message.delete()
 
 
 @app.on_message(filters.command("users") & filters.private & filters.user(OWNER_ID))
