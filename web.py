@@ -1,10 +1,47 @@
 from flask import Flask
+import threading
+import os
+from pyrogram import Client
+import logging
+import signal
+import sys
 
-app = Flask(__name__)
+# Initialize Flask app
+flask_app = Flask(__name__)
 
-@app.route('/')
-def home():
-    return 'Hello, World!'
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+flask_app.logger.setLevel(logging.INFO)
+
+# Initialize Pyrogram client
+API_ID = os.getenv('API_ID')
+API_HASH = os.getenv('API_HASH')
+BOT_TOKEN = os.getenv('BOT_TOKEN')
+
+pyrogram_app = Client("my_bot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
+
+@flask_app.route('/health', methods=['GET'])
+def health_check():
+    bot_status = "running" if pyrogram_app.is_running() else "not running"
+    return f"Flask and bot status: {bot_status}", 200
+
+def run_flask_app():
+    port = int(os.getenv('PORT', 8080))
+    flask_app.run(host='0.0.0.0', port=port)
+
+def run_pyrogram_bot():
+    pyrogram_app.run()
+
+def signal_handler(sig, frame):
+    print('Signal received, shutting down...')
+    pyrogram_app.stop()  # Gracefully stop the Pyrogram bot
+    sys.exit(0)
+
+signal.signal(signal.SIGINT, signal_handler)
+signal.signal(signal.SIGTERM, signal_handler)
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=8080)
+    # Run Flask app in a separate thread
+    threading.Thread(target=run_flask_app).start()
+    # Start Pyrogram bot
+    run_pyrogram_bot()
