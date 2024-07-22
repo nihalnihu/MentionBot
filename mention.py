@@ -399,7 +399,7 @@ async def callback(client, query):
             chat_id=query.message.chat.id,
             action=enums.ChatAction.TYPING
         )
-        await asyncio.sleep(1)
+        await asyncio.sleep(.5)
         
         await query.edit_message_text(
             text=HELP_MSG,
