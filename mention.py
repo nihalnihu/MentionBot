@@ -419,6 +419,29 @@ async def users(client, message):
     await StatsLod.edit_text(f"Users: {ALL_USERS}\nGroups: {ALL_GROUPS}")
 
 
+@bot.on_message(filters.command("group_bc") & filters.user(config.OWNER_ID))
+async def broadcast(app: Client, msg: Message):
+    # Extract the broadcast message from the command arguments
+    broadcast_message = ' '.join(msg.text.split()[1:])
+    if not broadcast_message:
+        await msg.reply_text("Please provide a message to broadcast.")
+        return
+    
+    # Get all group IDs from the database
+    group_ids = get_all_group_ids()
+    
+    # Broadcast the message to each group
+    for group_id in group_ids:
+        try:
+            await app.send_message(chat_id=group_id, text=broadcast_message)
+        except Exception as e:
+            print(f"Failed to send message to group {group_id}: {str(e)}")
+
+    await msg.reply_text("Broadcast message sent to all groups.")
+
+
+
+
 # Start the Flask server in a separate thread
 if __name__ == '__main__':
     threading.Thread(target=run_flask).start()
