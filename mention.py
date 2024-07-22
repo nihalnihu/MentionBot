@@ -353,13 +353,12 @@ FSUB_BTN = [[
 
 
 
-command_delete_id = None
+
 
 
 @app.on_message(filters.command("start") & filters.private)
 async def start(client, start):
-    global command_delete_id
-    command_delete_id = message.message_id
+    global last_start_message_id
     
     user_id = start.from_user.id
     username = start.from_user.mention
@@ -367,10 +366,11 @@ async def start(client, start):
     is_subscribed = await check_subscription(client, user_id)
 
     if is_subscribed:
-        await start.reply_text(
+       response = await start.reply_text(
             text=START_TXT.format(username),
             reply_markup=InlineKeyboardMarkup(START_BTN)
         )
+        last_start_message_id = response.message_id
     else:
         FS = await start.reply_text(
             text=FSUB_MSG.format(username),
@@ -391,9 +391,12 @@ async def callback(bot, query):
         )
 
     elif data == 'CLOSE':
-        await query.message.delete()
-        await bot.delete_messages(query.chat.id, command_delete_id)
-        command_delete_id = None
+        
+        if last_start_message_id:
+            await query.message.chat.delete_messages([last_start_message_id])
+            # Reset the message ID
+            global last_start_message_id
+            last_start_message_id = None
         
 
 @app.on_message(filters.command("users") & filters.private & filters.user(OWNER_ID))
