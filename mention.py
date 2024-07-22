@@ -368,6 +368,4 @@ async def users(client, message):
     user_count = stats.get_user_count()
     await message.reply(f"Users: {user_count}")
 
-
-if __name__ == '__main__':
-    app.run()
+app.run()
