@@ -411,12 +411,10 @@ async def callback(client, query):
             await query.message.delete()
 
 @app.on_message(filters.command("stats") & filters.private & filters.user(OWNER_ID))
-async def users(client, message):
-    StatsLod = await message.reply_text("Getting...")
+async def stats(client, message):
     ALL_USERS = all_users()
     ALL_GROUPS = all_groups()
-    await asyncio.sleep(.5)
-    await StatsLod.edit_text(f"Users: {ALL_USERS}\nGroups: {ALL_GROUPS}")
+    await message.reply_text(f"Users: {ALL_USERS}\nGroups: {ALL_GROUPS}")
 
 
 
