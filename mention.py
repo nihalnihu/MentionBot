@@ -381,7 +381,7 @@ async def callback(client, query):
     data = query.data
     if data == 'HELP':
         await client.send_chat_action(
-            chat_id=message.chat.id,
+            chat_id=query.chat.id,
             action=enums.ChatAction.TYPING
         )
         await asyncio.sleep(2)
