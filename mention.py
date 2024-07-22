@@ -419,8 +419,8 @@ async def users(client, message):
     await StatsLod.edit_text(f"Users: {ALL_USERS}\nGroups: {ALL_GROUPS}")
 
 
-@bot.on_message(filters.command("group_bc") & filters.user(config.OWNER_ID))
-async def broadcast(app: Client, msg: Message):
+@app.on_message(filters.command("group_bc") & filters.user(config.OWNER_ID))
+async def broadcast(Client, msg):
     # Extract the broadcast message from the command arguments
     broadcast_message = ' '.join(msg.text.split()[1:])
     if not broadcast_message:
