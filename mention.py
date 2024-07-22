@@ -345,7 +345,7 @@ Pʟᴇᴀsᴇ ᴊᴏɪɴ ᴏᴜʀ ᴄʜᴀɴɴᴇʟ ᴛᴏ ᴜsᴇ ᴍᴇ !㋛�
 FSUB_BTN = [[
     InlineKeyboardButton('❗Join Now ❗', url='t.me/TG_BotCreator')
 ],[
-    InlineKeyboardButton('Try Again', callback_data='try')
+    InlineKeyboardButton('Try Again', url='https://t.me/TG_GRPMentionBot?start=start')
     
 ]
            
@@ -387,18 +387,6 @@ async def callback(bot, query):
 
     elif data == 'CLOSE':
         await query.message.delete()
-
-    elif data == 'try':
-        updated_keyboard = InlineKeyboardMarkup(
-            [[
-                InlineKeyboardButton("Try Again", url="https://t.me/TG_GRPMentionBot?start=start")
-            ]]
-        )
-        await query.answer()  # Acknowledge the callback query
-        await query.message.edit_text(
-            text=FSUB_MSG.format(username),
-            reply_markup=updated_keyboard
-        )
 
 @app.on_message(filters.command("users") & filters.private & filters.user(OWNER_ID))
 async def users(client, message):
