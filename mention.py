@@ -3,6 +3,7 @@ import asyncio
 import logging
 import stats
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup, CallbackQuery
+from stats import check_subscription
 
 api_id = 25731065
 api_hash = 'be534fb5a5afd8c3308c9ca92afde672'
@@ -314,23 +315,31 @@ FSUB_BTN = [[
 ]]
 
 
+
+
+
+
 @app.on_message(filters.command("start") & filters.private)
 async def start(client, message):
-  user_id = message.from_user.id
-  username = message.from_user.mention
-  stats.add_user(user_id)
-  is_subscribed = await check_subscription(client, user_id)
+    user_id = message.from_user.id
+    username = message.from_user.mention
+    stats.add_user(user_id)
+    is_subscribed = await check_subscription(client, user_id)
 
     if is_subscribed:
-      await message.reply_text(
-        text=START_TXT.format(username),
-        reply_markup=InlineKeyboardMarkup(START_BTN)
-    )
+        await message.reply_text(
+            text=START_TXT.format(username),
+            reply_markup=InlineKeyboardMarkup(START_BTN)
+        )
     else:
-      await message.reply_text(
-        text=FSUB_MSG.format(username),
-        reply_markup=InlineKeyboardMarkup(FSUB_BTN)
-      )
+        await message.reply_text(
+            text=FSUB_MSG.format(username),
+            reply_markup=InlineKeyboardMarkup(FSUB_BTN)
+        )
+
+
+
+
 
 
 @app.on_callback_query()
@@ -345,6 +354,12 @@ async def callback(bot, query):
 
     elif data == 'CLOSE':
         await query.message.delete()
+
+
+
+
+
+
 
 
 @app.on_message(filters.command("users") & filters.private & filters.user(OWNER_ID))

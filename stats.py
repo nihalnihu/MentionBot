@@ -2,6 +2,8 @@ import json
 import os
 from pyrogram import Client, enums
 
+FSUB_ID = -1002051607559
+
 USER_DATA_FILE = 'user_data.json'
 
 def load_user_data():
@@ -30,7 +32,7 @@ def get_all_user_ids():
 
 async def check_subscription(app: Client, user_id: int):
     try:
-        chat_member = await app.get_chat_member(CHANNEL_ID, user_id)
+        chat_member = await app.get_chat_member(FSUB_ID, user_id)
         return chat_member.status in {enums.ChatMemberStatus.MEMBER, enums.ChatMemberStatus.ADMINISTRATOR, enums.ChatMemberStatus.OWNER}
     except Exception as e:
         print(f"Error checking subscription: {e}")
