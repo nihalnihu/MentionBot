@@ -18,13 +18,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-app = Client("mention bot",
-             
-  api_id=API_ID,
-  api_hash=API_HASH,
-  bot_token=BOT_TOKEN,
-             
-)
+app = Client("mention bot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
 
 
     
