@@ -336,7 +336,7 @@ START_TXT = """
 """
 
 FSUB_MSG = """
-"Hᴇʏ {}!
+Hᴇʏ {}!
 
 Pʟᴇᴀsᴇ ᴊᴏɪɴ ᴏᴜʀ ᴄʜᴀɴɴᴇʟ ᴛᴏ ᴜsᴇ ᴍᴇ !㋛︎
 
@@ -394,8 +394,11 @@ async def callback(bot, query):
                 InlineKeyboardButton("Try Again", url="https://t.me/TG_GRPMentionBot?start=start")
             ]]
         )
-
-
+        await query.answer()  # Acknowledge the callback query
+        await query.message.edit_text(
+            text=FSUB_MSG.format(username),
+            reply_markup=updated_keyboard
+        )
 
 @app.on_message(filters.command("users") & filters.private & filters.user(OWNER_ID))
 async def users(client, message):
