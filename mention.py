@@ -58,6 +58,11 @@ async def mention(client, message):
     user_id = message.from_user.id
     mention = message.from_user.mention
     chat_id = message.chat.id
+    if not already_db(user_id):
+        await message.reply_text(
+            text=f"Hey {mention}❗ First Start Me In PM"
+        )
+        return
     
     logger.info(f"Chat ID: {chat_id}, User ID: {user_id}")
 
@@ -363,13 +368,13 @@ FSUB_BTN = [[
 
 @app.on_message(filters.command("start") & filters.private)
 async def startt(client, start):
-    add_user(start.from_user.id)
     user_id = start.from_user.id
     username = start.from_user.mention
     is_subscribed = await check_subscription(client, user_id)
 
     if is_subscribed:
-       await start.reply_text(
+        add_user(start.from_user.id)
+        await start.reply_text(
             text=START_TXT.format(username),
             reply_markup=InlineKeyboardMarkup(START_BTN)
         )
