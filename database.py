@@ -4,8 +4,8 @@ MONGO = "mongodb+srv://24:24@cluster0.cw3bc2z.mongodb.net/?retryWrites=true&w=ma
 
 client = MongoClient(MONGO)
 
-users = client['main']['users']
-groups = client['main']['groups']
+users = client['main']['M_users']
+groups = client['main']['M_groups']
 
 def already_db(user_id):
         user = users.find_one({"user_id" : str(user_id)})
