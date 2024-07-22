@@ -318,7 +318,7 @@ HELP_MSG = """
 ᴇɴᴊᴏʏ🤩
 """
 
-ADD_ME =  [[
+HELP_BTN =  [[
     InlineKeyboardButton("ᴀᴅᴅ ᴍᴇ ᴛᴏ ʏᴏᴜʀ ɢʀᴏᴜᴘ ➕", url="https://t.me/TG_GRPMentionBot?startgroup=true")
     ],[
         InlineKeyboardButton("🚫 Close", callback_data="CLOSE")
@@ -353,23 +353,26 @@ FSUB_BTN = [[
 
 
 
-
+command_delete_id = None
 
 
 @app.on_message(filters.command("start") & filters.private)
-async def start(client, message):
-    user_id = message.from_user.id
-    username = message.from_user.mention
+async def start(client, start):
+    global command_delete_id
+    command_delete_id = message.message_id
+    
+    user_id = start.from_user.id
+    username = start.from_user.mention
     stats.add_user(user_id)
     is_subscribed = await check_subscription(client, user_id)
 
     if is_subscribed:
-        await message.reply_text(
+        await start.reply_text(
             text=START_TXT.format(username),
             reply_markup=InlineKeyboardMarkup(START_BTN)
         )
     else:
-        FS = await message.reply_text(
+        FS = await start.reply_text(
             text=FSUB_MSG.format(username),
             reply_markup=InlineKeyboardMarkup(FSUB_BTN)
                                      )
@@ -383,12 +386,15 @@ async def callback(bot, query):
     if data == 'HELP':
         await query.edit_message_text(
             text=HELP_MSG,
-            reply_markup=InlineKeyboardMarkup(ADD_ME)
+            reply_markup=InlineKeyboardMarkup(HELP_BTN)
         
         )
 
     elif data == 'CLOSE':
         await query.message.delete()
+        await bot.delete_message(query.chat.id, command_delete_id)
+        command_delete_id = None
+        
 
 @app.on_message(filters.command("users") & filters.private & filters.user(OWNER_ID))
 async def users(client, message):
