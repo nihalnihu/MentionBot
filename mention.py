@@ -392,9 +392,14 @@ async def users(client, message):
 
 # Entry point
 async def main():
-    await start_web_server()
-    await app.start()
-    logger.info("Bot started")
-
+    try:
+        await start_web_server()
+        await app.start()
+        logger.info("Bot started")
+    except Exception as e:
+        logger.error(f"An error occurred: {e}")
+    finally:
+        await app.stop()
+        
 if __name__ == "__main__":
     asyncio.run(main())
