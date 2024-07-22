@@ -2,18 +2,36 @@ from pyrogram import Client, filters, enums
 import asyncio
 import logging
 import stats
+import os
+from os import environ
+from aiohttp import web as webserver
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup, CallbackQuery
 from stats import check_subscription
+from web import bot_start
+
 
 api_id = os.getenv('API_ID')
 api_hash = os.getenv('API_HASH')
 bot_token = os.getenv('BOT_TOKEN')
+PORT_CODE = environ.get("PORT", "8080")
 
 logging.basicConfig(level=logging.INFO)                    
 logger = logging.getLogger(__name__)
-                                                           # Initialize the bot
-app = Client("mention_bot", api_id=api_id, api_hash=api_hash, bot_token=bot_token)
 
+class Bot(Client):
+  def __init__(self):
+    super().__init__(
+      session_name=SESSION,
+      api_id=API_ID,
+      api_hash=API_HASH,
+      bot_token=BOT_TOKEN,
+      workers=50,
+      sleep_threshold=5,
+    )
+
+
+
+    
 async def is_user_admin(chat_id, user_id):
     try:
         chat_member = await app.get_chat_member(chat_id, user_id)
@@ -352,13 +370,8 @@ async def callback(bot, query):
         )
 
     elif data == 'CLOSE':
-        await query.message.delete()
-
-
-
-
-
-
+      await query.message.delete()
+      
 
 
 @app.on_message(filters.command("users") & filters.private & filters.user(OWNER_ID))
@@ -366,6 +379,18 @@ async def users(client, message):
     user_count = stats.get_user_count()
     await message.reply(f"Users: {user_count}")
 
+async def start(self):
+  await super().start()
+  await Media.ensure_indexes()
+  me = await self.get_me()
+  self.username = '@' + me.username
+  print(f"{me.first_name} with for pyrogram v{__version__} (Layer {layer}) started on {me.username}")
+  
+  client = webserver.AppRunner(await bot_run())
+  
+  await client.setup()
+  bind_address = "0.0.0.0"
+  await webserver.TCPSite(client, bind_address, PORT_CODE).start()
 
-
+app = Bot()
 app.run()
