@@ -7,7 +7,6 @@ from os import environ
 from aiohttp import web as webserver
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup, CallbackQuery
 from stats import check_subscription
-import web
 
 
 api_id = os.getenv('API_ID')
@@ -18,17 +17,14 @@ PORT_CODE = environ.get("PORT", "8080")
 logging.basicConfig(level=logging.INFO)                    
 logger = logging.getLogger(__name__)
 
-class Bot(Client):
-  def __init__(self):
-    super().__init__(
-      session_name=SESSION,
-      api_id=API_ID,
-      api_hash=API_HASH,
-      bot_token=BOT_TOKEN,
-      workers=50,
-      sleep_threshold=5,
-    )
 
+app = Client("mention bot",
+             
+  api_id=API_ID,
+  api_hash=API_HASH,
+  bot_token=BOT_TOKEN,
+             
+)
 
 
     
@@ -377,10 +373,6 @@ async def callback(bot, query):
 async def users(client, message):
   user_count = stats.get_user_count()
   await message.reply(f"Users: {user_count}")
-  client = webserver.AppRunner(await bot_run())
-  await client.setup()
-  bind_address = "0.0.0.0"
-  await webserver.TCPSite(client, bind_address, PORT_CODE).start()
 
-app = Bot()
+
 app.run()
