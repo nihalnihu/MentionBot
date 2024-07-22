@@ -392,7 +392,7 @@ async def callback(bot, query):
 
     elif data == 'CLOSE':
         await query.message.delete()
-        await bot.delete_message(query.chat.id, command_delete_id)
+        await bot.delete_messages(query.chat.id, command_delete_id)
         command_delete_id = None
         
 
