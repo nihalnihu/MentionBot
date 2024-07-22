@@ -1,5 +1,5 @@
 from flask import Flask
-import app
+from mention import app
 app = Flask(__name__)
 
 @app.route('/health', methods=['GET'])
