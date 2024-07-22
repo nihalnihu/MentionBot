@@ -369,5 +369,5 @@ async def users(client, message):
     await message.reply(f"Users: {user_count}")
 
 
-
-app.run()
+if __name__ == '__main__':
+    bot.run()
