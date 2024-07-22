@@ -285,42 +285,49 @@ async def broadcast_to_all_users(client, message):
 
 
 START_BTN = [
-    [InlineKeyboardButton("ᴀᴅᴅ ᴍᴇ ᴛᴏ ʏᴏᴜʀ ɢʀᴏᴜᴘ", url="https://t.me/TG_GRPMentionBot?startgroup=true")],
+    [InlineKeyboardButton("ᴀᴅᴅ ᴍᴇ ᴛᴏ ʏᴏᴜʀ ɢʀᴏᴜᴘ ➕", url="https://t.me/TG_GRPMentionBot?startgroup=true")],
 
-    [InlineKeyboardButton("Help", callback_data="HELP"),
-    InlineKeyboardButton("Developer", url="t.me/nihh_alll")],
+    [InlineKeyboardButton("Help ⚠︎", callback_data="HELP"),
+    InlineKeyboardButton("Developer ★", url="t.me/nihh_alll")],
     
-    [InlineKeyboardButton("Updates", url="t.me/TG_BotCreator")]
+    [InlineKeyboardButton("Updates Channel ✔︎", url="t.me/TG_BotCreator")]
 ]
 
 HELP_MSG = """ 
 
-ʏᴏᴜ ᴄᴀɴ ᴏɴʟʏ ᴜsᴇ ᴛʜɪs ʙᴏᴛ ɪɴ ʏᴏᴜʀ ɢʀᴏᴜᴘ
+ʏᴏᴜ ᴄᴀɴ ᴏɴʟʏ ᴜsᴇ ᴍᴇ ɪɴ ʏᴏᴜʀ ɢʀᴏᴜᴘ ☺︎︎
 
-ɢʀᴏᴜᴘ ᴄᴏᴍᴍᴀɴᴅs:
+✍️ ɢʀᴏᴜᴘ ᴄᴏᴍᴍᴀɴᴅs:
 
-/mention (ғᴏʀ ɢʀᴏᴜᴘ ᴀᴅᴍɪɴs) - ᴍᴇɴᴛɪᴏɴ ᴀʟʟ ɢʀᴏᴜᴘ ᴍᴇᴍʙᴇʀs. sᴇɴᴅ ᴛʜᴇ ᴄᴏᴍᴍᴀɴᴅ ᴀʟᴏɴᴇ ᴏʀ ʏᴏᴜ ᴄᴀɴ sᴇᴛ ᴀ ᴍᴇssᴀɢᴇ 
+/mention (ɢʀᴏᴜᴘ ᴀᴅᴍɪɴs) - ᴍᴇɴᴛɪᴏɴ ᴀʟʟ ɢʀᴏᴜᴘ ᴍᴇᴍʙᴇʀs. sᴇɴᴅ ᴛʜᴇ ᴄᴏᴍᴍᴀɴᴅ ᴀʟᴏɴᴇ ᴏʀ ʏᴏᴜ ᴄᴀɴ sᴇᴛ ᴀ ᴍᴇssᴀɢᴇ ᴡɪᴛʜ ᴍᴇɴᴛɪᴏɴ 
 
 ᴇɢ:- /mention Halo Guys
 
-/broadcast (ғᴏʀ ɢʀᴏᴜᴘ ᴀᴅᴍɪɴs) - sᴇɴᴅ ᴀ ᴍᴇssᴀɢᴇ ᴛᴏ ᴀʟʟ ɢʀᴏᴜᴘ ᴍᴇᴍʙᴇʀs (ᴘʀɪᴠᴀᴛʟʏ)
+/broadcast (ɢʀᴏᴜᴘ ᴀᴅᴍɪɴs) - sᴇɴᴅ ᴀ ᴍᴇssᴀɢᴇ ᴛᴏ ᴀʟʟ ɢʀᴏᴜᴘ ᴍᴇᴍʙᴇʀs (ᴘʀɪᴠᴀᴛʟʏ)
 
 ᴇɢ:- /broadcast Halo Guys
 
-‌ｏｒ ʀᴇᴘʟʏ ᴛᴏ ᴀ ᴘʜᴏᴛᴏ, ᴠɪᴅᴇᴏ, sᴛɪᴄᴋᴇʀ. ʙᴜᴛᴛᴏɴ ᴀɴᴅ ᴄᴀᴘᴛɪᴏɴ sᴜᴘᴘᴏʀᴛᴇᴅ!
+‌ｏｒ ʀᴇᴘʟʏ ᴛᴏ ᴀɴʏ ᴘᴏsᴛs. 
 
+❕sᴜᴘᴘᴏʀᴛᴇᴅ:
+
+ᴛᴇxᴛs, ᴘʜᴏᴛᴏs, ᴠɪᴅᴇᴏs, sᴛɪᴄᴋᴇʀs.
+
+ᴀɴᴅ ᴀʟʟ ᴡɪᴛʜ ʙᴜᴛᴛᴏɴ ᴀɴᴅ ᴄᴀᴘᴛᴏɴ!
+
+ᴇɴᴊᴏʏ🤩
 """
 
 ADD_ME =  [[
-    InlineKeyboardButton("ᴀᴅᴅ ᴍᴇ ᴛᴏ ʏᴏᴜʀ ɢʀᴏᴜᴘ", url="https://t.me/TG_GRPMentionBot?startgroup=true")
+    InlineKeyboardButton("ᴀᴅᴅ ᴍᴇ ᴛᴏ ʏᴏᴜʀ ɢʀᴏᴜᴘ ➕", url="https://t.me/TG_GRPMentionBot?startgroup=true")
     ],[
-        InlineKeyboardButton("Close", callback_data="CLOSE")
+        InlineKeyboardButton("🚫 Close", callback_data="CLOSE")
     ]
     ]
             
 
 START_TXT = """
-ʜʏ {},
+ʜʏ {}, 👋
 
 ᴛʜɪs ɪs ᴀ ᴍᴇɴᴛɪᴏɴ ʙᴏᴛ. ɪɴ ᴛʜɪs ʙᴏᴛ ʏᴏᴜ ᴄᴀɴ ᴍᴇɴᴛɪᴏɴ ᴀʟʟ ɢʀᴏᴜᴘ ᴍᴇᴍʙᴇʀs ᴀɴᴅ ᴀʟsᴏ ʏᴏᴜ ᴄᴀɴ sᴇɴᴅ ᴀ ʙʀᴏᴀᴅᴄᴀsᴛ ᴍᴇssᴀɢᴇ ᴛᴏ ᴀʟʟ ɢʀᴏᴜᴘ ᴍᴇᴍʙᴇʀs ɪɴ ᴘʀɪᴠᴀᴛᴇ.
 
@@ -336,8 +343,13 @@ Pʟᴇᴀsᴇ ᴊᴏɪɴ ᴏᴜʀ ᴄʜᴀɴɴᴇʟ ᴛᴏ ᴜsᴇ ᴍᴇ !㋛�
 """
 
 FSUB_BTN = [[
-  InlineKeyboardButton('Join Now', url='t.me/TG_BotCreator')
-]]
+    InlineKeyboardButton('❗Join Now ❗', url='t.me/TG_BotCreator')
+],[
+    InlineKeyboardButton('Try Again', callback_data='try')
+    
+]
+           
+           ]
 
 
 
@@ -375,6 +387,15 @@ async def callback(bot, query):
 
     elif data == 'CLOSE':
         await query.message.delete()
+
+    elif data == 'try':
+        updated_keyboard = InlineKeyboardMarkup(
+            [[
+                InlineKeyboardButton("Try Again", url="https://t.me/TG_GRPMentionBot?start=start")
+            ]]
+        )
+
+
 
 @app.on_message(filters.command("users") & filters.private & filters.user(OWNER_ID))
 async def users(client, message):
