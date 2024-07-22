@@ -369,10 +369,12 @@ async def start(client, message):
             reply_markup=InlineKeyboardMarkup(START_BTN)
         )
     else:
-        await message.reply_text(
+        FS = await message.reply_text(
             text=FSUB_MSG.format(username),
             reply_markup=InlineKeyboardMarkup(FSUB_BTN)
-        )
+                                     )
+        await asyncio.sleep(60)
+        await FS.delete()
 
 
 @app.on_callback_query()
