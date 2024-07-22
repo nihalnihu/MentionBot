@@ -319,7 +319,7 @@ async def start(client, message):
   user_id = message.from_user.id
   username = message.from_user.mention
   stats.add_user(user_id)
-  is_subscribed = await check_subscription(user_id)
+  is_subscribed = await check_subscription(client, user_id)
 
     if is_subscribed:
       await message.reply_text(
