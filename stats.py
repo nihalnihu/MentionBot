@@ -1,5 +1,6 @@
 import json
 import os
+from pyrogram import Client, enums
 
 USER_DATA_FILE = 'user_data.json'
 
@@ -27,12 +28,10 @@ def get_all_user_ids():
     return list(user_data.keys())
 
 
-async def check_subscription(user_id):
+async def check_subscription(app: Client, user_id: int):
     try:
         chat_member = await app.get_chat_member(CHANNEL_ID, user_id)
-        return chat_member.status in [ChatMemberStatus.MEMBER, ChatMemberStatus.ADMINISTRATOR, ChatMemberStatus.OWNER]
-    except UserNotParticipant:
-        return False
+        return chat_member.status in {enums.ChatMemberStatus.MEMBER, enums.ChatMemberStatus.ADMINISTRATOR, enums.ChatMemberStatus.OWNER}
     except Exception as e:
         print(f"Error checking subscription: {e}")
         return False
