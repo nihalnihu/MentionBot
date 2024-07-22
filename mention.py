@@ -32,7 +32,7 @@ async def is_user_admin(chat_id, user_id):
         logger.error(f"Error fetching chat member status for user_id {user_id}: {e}")
         return False
 
-@app.on_message(filters.command("mention") & filters.group)
+@app.client.on_message(filters.command("mention") & filters.group)
 async def mention(client, message):
     user_id = message.from_user.id
     chat_id = message.chat.id
@@ -72,7 +72,7 @@ async def mention(client, message):
 
 
 
-@app.on_message(filters.command("broadcast") & filters.group)
+@app.client.on_message(filters.command("broadcast") & filters.group)
 async def broadcast_to_members(client, message):
     chat_id = message.chat.id
     user_id = message.from_user.id
@@ -175,7 +175,7 @@ async def broadcast_to_members(client, message):
 
 
 
-@app.on_message(filters.command("bc") & filters.private & filters.user(OWNER_ID))
+@app.client.on_message(filters.command("bc") & filters.private & filters.user(OWNER_ID))
 async def broadcast_to_all_users(client, message):
     command_parts = message.text.split(maxsplit=1)
     failed_count = 0
@@ -323,7 +323,7 @@ FSUB_BTN = [[
 
 
 
-@app.on_message(filters.command("start") & filters.private)
+@app.client.on_message(filters.command("start") & filters.private)
 async def start(client, message):
     user_id = message.from_user.id
     username = message.from_user.mention
@@ -346,7 +346,7 @@ async def start(client, message):
 
 
 
-@app.on_callback_query()
+@app.client.on_callback_query()
 async def callback(bot, query):
     data = query.data
     if data == 'HELP':
@@ -360,7 +360,7 @@ async def callback(bot, query):
         await query.message.delete()
 
 
-@app.on_message(filters.command("users") & filters.private & filters.user(OWNER_ID))
+@app.client.on_message(filters.command("users") & filters.private & filters.user(OWNER_ID))
 async def users(client, message):
     user_count = stats.get_user_count()
     await message.reply(f"Users: {user_count}")
