@@ -1,23 +1,21 @@
-from pyrogram import Client, enums
-import logging
 
-# Set up logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+import os
+from pyrogram import Client, enums
+
 
 FSUB_ID = -1002051607559
 
-async def check_subscription(app: Client, user_id: int) -> bool:
+
+async def check_subscription(app: Client, user_id: int):
     try:
         chat_member = await app.get_chat_member(FSUB_ID, user_id)
-        return chat_member.status in {
-            enums.ChatMemberStatus.MEMBER,
-            enums.ChatMemberStatus.ADMINISTRATOR,
-            enums.ChatMemberStatus.OWNER
-        }
-    except (enums.FloodWait, enums.UserNotParticipant) as e:
-        logger.error(f"Error checking subscription: {e}")
-        return False
+        return chat_member.status in {enums.ChatMemberStatus.MEMBER, enums.ChatMemberStatus.ADMINISTRATOR, enums.ChatMemberStatus.OWNER}
     except Exception as e:
-        logger.exception("Unexpected error during subscription check")
+        print(f"Error checking subscription: {e}")
         return False
+
+if __name__ == "__main__":
+    import sys
+    if len(sys.argv) > 1:
+        if sys.argv[1] == 'count':
+            print("Hyhyhy")
