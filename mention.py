@@ -17,7 +17,7 @@ OWNER_ID = os.getenv('OWNER_ID', '')
 logging.basicConfig(level=logging.INFO)                    
 logger = logging.getLogger(__name__)
                                                            # Initialize the bot
-app = Client("mention_bot", api_id=api_id, api_hash=api_hash, bot_token=bot_token)
+app.client = Client("mention_bot", api_id=api_id, api_hash=api_hash, bot_token=bot_token)
 
 async def is_user_admin(chat_id, user_id):
     try:
@@ -370,8 +370,8 @@ async def users(client, message):
 @app.route(f'/{bot_token}', methods=['POST'])
 def webhook():
     json_str = request.get_data(as_text=True)
-    update = Update.de_json(json_str, app)
-    asyncio.run(app.process_update(update))
+    update = Update.de_json(json_str, app.client)
+    asyncio.run(app.client.process_update(update))
     return jsonify({"status": "ok"}), 200
 
 @app.route('/')
@@ -379,5 +379,5 @@ def index():
     return "Bot is running", 200
 
 if __name__ == '__main__':
-    app.start()
+    app.client.start()
     app.run(port=5000)
