@@ -58,10 +58,6 @@ async def mention(client, message):
     user_id = message.from_user.id
     mention = message.from_user.mention
     chat_id = message.chat.id
-    if user_id not in all_users():
-        await message.reply_text(
-            text=f"Hey {mention}❗ First Start Me In PM"
-        )
     
     logger.info(f"Chat ID: {chat_id}, User ID: {user_id}")
 
@@ -106,7 +102,7 @@ async def broadcast_to_members(client, message):
     failed_count = 0
     done_count = 0
     
-    if user_id not in all_users():
+    if int(user_id) not in int(all_users()):
         await message.reply_text(
             text=f"Hey {mention}❗ First Start Me In PM"
         )
