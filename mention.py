@@ -170,7 +170,7 @@ async def broadcast_to_members(client, message):
                     failed_count += 1
                     logger.error(f"Failed to send {media_type} to user {member.user.id}: {e}")
 
-        await reply_message.edit(f"Successfully {media_type} Broadcasted To {done_count} Members\nFailed: {failed_count}\n\nTotal Members: {done_count + failed_count}")
+        await reply_message.edit(f"Type: {media_type}\nTotal Members: {done_count + failed_count}\n\nSuccess {done_count}\nFailed: {failed_count}")
 
     else:
         command_parts = message.text.split(maxsplit=1)
@@ -189,7 +189,7 @@ async def broadcast_to_members(client, message):
                         failed_count += 1
                         logger.error(f"Failed to send message to user {member.user.id}: {e}")
 
-            await reply_message.edit(f"Successfully Message Sended To {done_count} Members\nFailed: {failed_count}\n\nTotal Members: {done_count + failed_count}")
+            await reply_message.edit(f"Type: Text\nTotal Members: {done_count + failed_count}\n\nSuccess: {done_count}\nFailed: {failed_count}")
 
         else:
             await message.reply("Use: /broadcast <message> or reply to a photo, video, or sticker")
