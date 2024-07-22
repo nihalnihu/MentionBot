@@ -6,10 +6,10 @@ import os
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup, CallbackQuery
 from stats import check_subscription
 
-api_id = os.getenv('API_ID','')
-api_hash = os.getenv('API_HASH','')
-bot_token = os.getenv('BOT_TOKEN','')                                                     
-OWNER_ID = os.getenv('OWNER_ID','')
+api_id = os.getenv('API_ID')
+api_hash = os.getenv('API_HASH')
+bot_token = os.getenv('BOT_TOKEN', '6865008064:AAFROMPKO3aJ7LOP7L6xwnnzw1o6np7KupU')                                                     
+OWNER_ID = os.getenv('OWNER_ID')
 
 logging.basicConfig(level=logging.INFO)                    
 logger = logging.getLogger(__name__)
