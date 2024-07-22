@@ -56,8 +56,13 @@ async def is_user_admin(chat_id, user_id):
 @app.on_message(filters.command("mention") & filters.group)
 async def mention(client, message):
     user_id = message.from_user.id
+    mention = message.from_user.mention
     chat_id = message.chat.id
-
+    if user_id not in all_users():
+        await message.reply_text(
+            text=f"Hey {mention}❗ First Start Me In PM"
+        )
+    
     logger.info(f"Chat ID: {chat_id}, User ID: {user_id}")
 
     is_admin = await is_user_admin(chat_id, user_id)
@@ -97,8 +102,14 @@ async def mention(client, message):
 async def broadcast_to_members(client, message):
     chat_id = message.chat.id
     user_id = message.from_user.id
+    mention = message.from_user.mention
     failed_count = 0
     done_count = 0
+    
+    if user_id not in all_users():
+        await message.reply_text(
+            text=f"Hey {mention}❗ First Start Me In PM"
+        )
 
     logger.info(f"Chat ID: {chat_id}, User ID: {user_id}")
 
