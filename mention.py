@@ -8,16 +8,24 @@ from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyb
 from stats import check_subscription
 
 
-api_id = os.getenv('API_ID')
-api_hash = os.getenv('API_HASH')
-bot_token = os.getenv('BOT_TOKEN')
-PORT_CODE = os.getenv("PORT", "8080")
+# Environment Variables
+API_ID = os.getenv('API_ID')
+API_HASH = os.getenv('API_HASH')
+BOT_TOKEN = os.getenv('BOT_TOKEN')
+OWNER_ID = int(os.getenv('OWNER_ID', 0))
+PORT_CODE = int(os.getenv('PORT', '8080'))
 
-logging.basicConfig(level=logging.INFO)                    
+# Initialize Logging
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-
-app = Client("mention bot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
+# Define and initialize the Bot class
+app = Client(
+    session_name="my_bot_session",
+    api_id=API_ID,
+    api_hash=API_HASH,
+    bot_token=BOT_TOKEN,
+)
 
 
 # Define the web server
