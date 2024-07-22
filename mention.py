@@ -3,7 +3,8 @@ import asyncio
 import logging
 import stats
 import os
-from aiohttp import web as webserver
+import threading
+from flask import Flask
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup, CallbackQuery
 from stats import check_subscription
 
@@ -13,32 +14,27 @@ API_ID = os.getenv('API_ID')
 API_HASH = os.getenv('API_HASH')
 BOT_TOKEN = os.getenv('BOT_TOKEN')
 OWNER_ID = int(os.getenv('OWNER_ID', 0))
-PORT_CODE = int(os.getenv('PORT', '8080'))
 
 # Initialize Logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-app = Client("TGBot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
 
+bot = Flask(__name__)
 
-# Define the web server
-async def start_web_server():
-    async def root_route_handler(request):
-        return webserver.json_response({"message": "TGBot is running"})
+@bot.route('/')
+def hello_world():
+    return 'Hello, World!'
 
-    routes = webserver.RouteTableDef()
-    routes.get("/")(root_route_handler)
+@bot.route('/health')
+def health_check():
+    return 'Healthy', 200
 
-    web_app = webserver.Application(client_max_size=30000000)
-    web_app.add_routes(routes)
-    
-    runner = webserver.AppRunner(web_app)
-    await runner.setup()
-    site = webserver.TCPSite(runner, "0.0.0.0", int(PORT_CODE))
-    await site.start()
+def run_flask():
+    bot.run(host='0.0.0.0', port=8080)
 
-    logger.info(f"Web server running on port {PORT_CODE}")
+def run_app():
+    app = Client("TGBot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
 
 
     
@@ -365,10 +361,6 @@ async def start(client, message):
         )
 
 
-
-
-
-
 @app.on_callback_query()
 async def callback(bot, query):
     data = query.data
@@ -380,26 +372,17 @@ async def callback(bot, query):
         )
 
     elif data == 'CLOSE':
-      await query.message.delete()
-      
+        await query.message.delete()
 
 @app.on_message(filters.command("users") & filters.private & filters.user(OWNER_ID))
 async def users(client, message):
-  user_count = stats.get_user_count()
-  await message.reply(f"Users: {user_count}")
+    user_count = stats.get_user_count()
+    await message.reply(f"Users: {user_count}")
 
 
+app.run()
 
-# Entry point
-async def main():
-    try:
-        await start_web_server()
-        await app.start()
-        logger.info("Bot started")
-    except Exception as e:
-        logger.error(f"An error occurred: {e}")
-    finally:
-        await app.stop()
-        
-if __name__ == "__main__":
-    asyncio.run(main())
+if __name__ == '__main__':
+    threading.Thread(target=run_flask).start()
+    run_app()
+
