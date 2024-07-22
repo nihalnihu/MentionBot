@@ -358,7 +358,7 @@ CMD = {}
 
 @app.on_message(filters.command("start") & filters.private)
 async def startt(client, start):
-    CMD = start
+    CMD_ID = start.id
     
     user_id = start.from_user.id
     username = start.from_user.mention
@@ -391,10 +391,8 @@ async def callback(bot, query):
         )
 
     elif data == 'CLOSE':
-        
-        if last_start_message_id:
             await query.message.delete()
-            await CMD.delete()
+            await bot.delete.messages(query.chat.id, CMD_ID)
             CMD = {}
 
 @app.on_message(filters.command("users") & filters.private & filters.user(OWNER_ID))
