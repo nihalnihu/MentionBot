@@ -7,7 +7,7 @@ from os import environ
 from aiohttp import web as webserver
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup, CallbackQuery
 from stats import check_subscription
-from web import bot_start
+import web
 
 
 api_id = os.getenv('API_ID')
@@ -373,21 +373,11 @@ async def callback(bot, query):
       await query.message.delete()
       
 
-
 @app.on_message(filters.command("users") & filters.private & filters.user(OWNER_ID))
 async def users(client, message):
-    user_count = stats.get_user_count()
-    await message.reply(f"Users: {user_count}")
-
-async def start(self):
-  await super().start()
-  await Media.ensure_indexes()
-  me = await self.get_me()
-  self.username = '@' + me.username
-  print(f"{me.first_name} with for pyrogram v{__version__} (Layer {layer}) started on {me.username}")
-  
+  user_count = stats.get_user_count()
+  await message.reply(f"Users: {user_count}")
   client = webserver.AppRunner(await bot_run())
-  
   await client.setup()
   bind_address = "0.0.0.0"
   await webserver.TCPSite(client, bind_address, PORT_CODE).start()
