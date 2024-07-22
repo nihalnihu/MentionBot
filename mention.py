@@ -7,7 +7,7 @@ import threading
 from flask import Flask
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup, CallbackQuery
 from stats import check_subscription
-from database import add_user, add_group, all_users, all_groups, users, remove_user
+from database import add_user, add_group, all_users, all_groups, users, remove_user, already_db
 
 # Environment Variables
 API_ID = os.getenv('API_ID')
@@ -102,10 +102,11 @@ async def broadcast_to_members(client, message):
     failed_count = 0
     done_count = 0
     
-    if int(user_id) not in int(all_users()):
+    if not already_db(user_id):
         await message.reply_text(
             text=f"Hey {mention}❗ First Start Me In PM"
         )
+        return
 
     logger.info(f"Chat ID: {chat_id}, User ID: {user_id}")
 
