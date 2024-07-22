@@ -7,7 +7,7 @@ import threading
 from flask import Flask
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup, CallbackQuery
 from stats import check_subscription
-
+from database import add_user, add_group, all_users, all_groups, users, remove_user
 
 # Environment Variables
 API_ID = os.getenv('API_ID')
@@ -366,6 +366,7 @@ async def startt(client, start):
             text=START_TXT.format(username),
             reply_markup=InlineKeyboardMarkup(START_BTN)
         )
+        add_user(start.from_user.id)
         
     else:
         FS = await start.reply_text(
@@ -397,8 +398,8 @@ async def callback(client, query):
 
 @app.on_message(filters.command("users") & filters.private & filters.user(OWNER_ID))
 async def users(client, message):
-    user_count = stats.get_user_count()
-    await message.reply(f"Users: {user_count}")
+    ALL_USERS = all_users()
+    await message.reply(f"Users: {ALL_USERS}")
 
 
 # Start the Flask server in a separate thread
