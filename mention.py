@@ -370,4 +370,8 @@ async def users(client, message):
 
 
 
-app.run()
+def run_bot():
+    app.run()  # Starts the bot
+
+if __name__ == "__main__":
+    run_bot()
