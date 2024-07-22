@@ -418,9 +418,7 @@ async def stats(client, message):
 
 
 
-
-
-@app.on_message(filters.command("group_bc") & filters.private)
+@app.on_message(filters.command("group_bc") & filters.private & filters.user(OWNER_ID))
 async def broadcast_to_all_groups(client: Client, message):
     command_parts = message.text.split(maxsplit=1)
     failed_count = 0
@@ -513,12 +511,6 @@ async def broadcast_to_all_groups(client: Client, message):
                 await reply_message.edit(new_text)
         else:
             await message.reply("Use: /group_bc <message> or reply to a photo, video, or sticker")
-
-
-
-
-
-
 
 
 # Start the Flask server in a separate thread
