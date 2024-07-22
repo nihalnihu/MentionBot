@@ -11,7 +11,7 @@ from stats import check_subscription
 api_id = os.getenv('API_ID')
 api_hash = os.getenv('API_HASH')
 bot_token = os.getenv('BOT_TOKEN')
-PORT_CODE = environ.get("PORT", "8080")
+PORT_CODE = os.getenv("PORT", "8080")
 
 logging.basicConfig(level=logging.INFO)                    
 logger = logging.getLogger(__name__)
