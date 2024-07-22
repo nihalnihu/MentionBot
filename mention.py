@@ -1,23 +1,19 @@
-from flask import Flask, request, jsonify
 from pyrogram import Client, filters, enums
 import asyncio
 import logging
 import stats
-import os
-from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup, Update, CallbackQuery
+from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup, CallbackQuery
 from stats import check_subscription
 
-app = Flask(__name__)
-
-api_id = os.getenv('API_ID', '')
-api_hash = os.getenv('API_HASH', '')
-bot_token = os.getenv('BOT_TOKET', '')                                                          
-OWNER_ID = os.getenv('OWNER_ID', '')
+api_id = 25731065
+api_hash = 'be534fb5a5afd8c3308c9ca92afde672'
+bot_token = '6865008064:AAHfTdmqXhrd-P-2Og2Mu-I5z9_Rh9WQMCY'                                                          
+OWNER_ID = 7220858548
 
 logging.basicConfig(level=logging.INFO)                    
 logger = logging.getLogger(__name__)
                                                            # Initialize the bot
-app.client = Client("mention_bot", api_id=api_id, api_hash=api_hash, bot_token=bot_token)
+app = Client("mention_bot", api_id=api_id, api_hash=api_hash, bot_token=bot_token)
 
 async def is_user_admin(chat_id, user_id):
     try:
@@ -32,7 +28,7 @@ async def is_user_admin(chat_id, user_id):
         logger.error(f"Error fetching chat member status for user_id {user_id}: {e}")
         return False
 
-@app.client.on_message(filters.command("mention") & filters.group)
+@app.on_message(filters.command("mention") & filters.group)
 async def mention(client, message):
     user_id = message.from_user.id
     chat_id = message.chat.id
@@ -72,7 +68,7 @@ async def mention(client, message):
 
 
 
-@app.client.on_message(filters.command("broadcast") & filters.group)
+@app.on_message(filters.command("broadcast") & filters.group)
 async def broadcast_to_members(client, message):
     chat_id = message.chat.id
     user_id = message.from_user.id
@@ -175,7 +171,7 @@ async def broadcast_to_members(client, message):
 
 
 
-@app.client.on_message(filters.command("bc") & filters.private & filters.user(OWNER_ID))
+@app.on_message(filters.command("bc") & filters.private & filters.user(OWNER_ID))
 async def broadcast_to_all_users(client, message):
     command_parts = message.text.split(maxsplit=1)
     failed_count = 0
@@ -323,7 +319,7 @@ FSUB_BTN = [[
 
 
 
-@app.client.on_message(filters.command("start") & filters.private)
+@app.on_message(filters.command("start") & filters.private)
 async def start(client, message):
     user_id = message.from_user.id
     username = message.from_user.mention
@@ -346,7 +342,7 @@ async def start(client, message):
 
 
 
-@app.client.on_callback_query()
+@app.on_callback_query()
 async def callback(bot, query):
     data = query.data
     if data == 'HELP':
@@ -360,24 +356,17 @@ async def callback(bot, query):
         await query.message.delete()
 
 
-@app.client.on_message(filters.command("users") & filters.private & filters.user(OWNER_ID))
+
+
+
+
+
+
+@app.on_message(filters.command("users") & filters.private & filters.user(OWNER_ID))
 async def users(client, message):
     user_count = stats.get_user_count()
     await message.reply(f"Users: {user_count}")
 
 
 
-@app.route(f'/{bot_token}', methods=['POST'])
-def webhook():
-    json_str = request.get_data(as_text=True)
-    update = Update.de_json(json_str, app.client)
-    asyncio.run(app.client.process_update(update))
-    return jsonify({"status": "ok"}), 200
-
-@app.route('/')
-def index():
-    return "Bot is running", 200
-
-if __name__ == '__main__':
-    app.client.start()
-    app.run(port=5000)
+app.run()
