@@ -415,7 +415,7 @@ async def users(client, message):
     StatsLod = await message.reply_text("Getting...")
     ALL_USERS = all_users()
     ALL_GROUPS = all_groups()
-    await asyncio.sleep(1)
+    await asyncio.sleep(.5)
     await StatsLod.edit_text(f"Users: {ALL_USERS}\nGroups: {ALL_GROUPS}")
 
 
