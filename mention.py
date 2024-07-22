@@ -420,6 +420,106 @@ async def stats(client, message):
 
 
 
+@app.on_message(filters.command("group_bc") & filters.private)
+async def broadcast_to_all_groups(client: Client, message):
+    command_parts = message.text.split(maxsplit=1)
+    failed_count = 0
+    done_count = 0
+
+    if message.reply_to_message:
+        replied_message = message.reply_to_message
+        reply_markup = replied_message.reply_markup
+        text = replied_message.text or ""
+        caption = replied_message.caption or ""
+
+        # Determine media type and content
+        media_type = None
+        media = None
+
+        if replied_message.photo:
+            media_type = "photo"
+            media = (replied_message.photo.file_id, caption)
+        elif replied_message.video:
+            media_type = "video"
+            media = (replied_message.video.file_id, caption)
+        elif replied_message.sticker:
+            media_type = "sticker"
+            media = (replied_message.sticker.file_id,)
+        else:
+            media_type = "text"
+            media = (text,)
+
+        reply_message = await message.reply(f"Broadcasting {media_type}...")
+
+        group_ids = get_all_group_ids()  # Fetch group IDs from the database
+        for group_id in group_ids:
+            try:
+                if media_type == "photo":
+                    await client.send_photo(
+                        group_id,
+                        media[0],
+                        caption=media[1] if media[1] else None,
+                        reply_markup=reply_markup
+                    )
+                elif media_type == "video":
+                    await client.send_video(
+                        group_id,
+                        media[0],
+                        caption=media[1] if media[1] else None,
+                        reply_markup=reply_markup
+                    )
+                elif media_type == "sticker":
+                    await client.send_sticker(
+                        group_id,
+                        media[0],
+                        reply_markup=reply_markup
+                    )
+                elif media_type == "text":
+                    await client.send_message(
+                        group_id,
+                        media[0],
+                        reply_markup=reply_markup
+                    )
+                done_count += 1
+                await asyncio.sleep(1)  # To avoid hitting rate limits
+            except Exception as e:
+                failed_count += 1
+                logger.error(f"Failed to send {media_type} to group {group_id}: {e}")
+
+        # Check if the message content has changed before editing
+        current_text = reply_message.text
+        new_text = f"Type: {media_type.capitalize()}\n\nTotal Groups: {done_count + failed_count}\nSuccess: {done_count}\nFailed: {failed_count}"
+        if current_text != new_text:
+            await reply_message.edit(new_text)
+    else:
+        if len(command_parts) > 1:
+            custom_message = command_parts[1]
+            reply_message = await message.reply("Broadcasting text message...")
+
+            group_ids = get_all_group_ids()  # Fetch group IDs from the database
+            for group_id in group_ids:
+                try:
+                    await client.send_message(group_id, custom_message)
+                    done_count += 1
+                    await asyncio.sleep(1)
+                except Exception as e:
+                    failed_count += 1
+                    logger.error(f"Failed to send message to group {group_id}: {e}")
+
+            # Check if the message content has changed before editing
+            current_text = reply_message.text
+            new_text = f"Type: Text\n\nTotal Groups: {done_count + failed_count}\nSuccess: {done_count}\nFailed: {failed_count}"
+            if current_text != new_text:
+                await reply_message.edit(new_text)
+        else:
+            await message.reply("Use: /group_bc <message> or reply to a photo, video, or sticker")
+
+
+
+
+
+
+
 
 # Start the Flask server in a separate thread
 if __name__ == '__main__':
