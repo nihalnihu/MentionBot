@@ -1,10 +1,13 @@
+from flask import Flask, request, jsonify
 from pyrogram import Client, filters, enums
 import asyncio
 import logging
 import stats
 import os
-from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup, CallbackQuery
+from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup, Update, CallbackQuery
 from stats import check_subscription
+
+app = Flask(__name__)
 
 api_id = os.getenv('API_ID', '')
 api_hash = os.getenv('API_HASH', '')
@@ -357,15 +360,24 @@ async def callback(bot, query):
         await query.message.delete()
 
 
-
-
-
-
-
-
 @app.on_message(filters.command("users") & filters.private & filters.user(OWNER_ID))
 async def users(client, message):
     user_count = stats.get_user_count()
     await message.reply(f"Users: {user_count}")
 
-app.run()
+
+
+@app.route(f'/{bot_token}', methods=['POST'])
+def webhook():
+    json_str = request.get_data(as_text=True)
+    update = Update.de_json(json_str, app)
+    asyncio.run(app.process_update(update))
+    return jsonify({"status": "ok"}), 200
+
+@app.route('/')
+def index():
+    return "Bot is running", 200
+
+if __name__ == '__main__':
+    app.start()
+    app.run(port=5000)
