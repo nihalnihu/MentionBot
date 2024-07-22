@@ -355,10 +355,9 @@ FSUB_BTN = [[
 
 @app.on_message(filters.command("start") & filters.private)
 async def startt(client, start):
-    
+    add_user(start.from_user.id)
     user_id = start.from_user.id
     username = start.from_user.mention
-    stats.add_user(user_id)
     is_subscribed = await check_subscription(client, user_id)
 
     if is_subscribed:
