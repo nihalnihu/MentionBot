@@ -19,13 +19,7 @@ PORT_CODE = int(os.getenv('PORT', '8080'))
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Define and initialize the Bot class
-app = Client(
-    session_name="my_bot_session",
-    api_id=API_ID,
-    api_hash=API_HASH,
-    bot_token=BOT_TOKEN,
-)
+app = Client("TGBot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
 
 
 # Define the web server
