@@ -3,7 +3,7 @@ import os
 from pyrogram import Client, enums
 
 
-FSUB_ID = -1002051607559
+FSUB_ID = os.getenv('FSUB_ID')
 
 
 async def check_subscription(app: Client, user_id: int):
