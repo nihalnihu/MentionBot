@@ -170,7 +170,7 @@ async def broadcast_to_members(client, message):
                     failed_count += 1
                     logger.error(f"Failed to send {media_type} to user {member.user.id}: {e}")
 
-        await reply_message.edit(f"Total Members: {done_count + failed_count}\nSuccessfully Sent: {done_count}\nFailed: {failed_count}")
+        await reply_message.edit(f"Successfully {media_type} Broadcasted To {done_count} Members\nFailed: {failed_count}\n\nTotal Members: {done_count + failed_count}")
 
     else:
         command_parts = message.text.split(maxsplit=1)
@@ -189,10 +189,10 @@ async def broadcast_to_members(client, message):
                         failed_count += 1
                         logger.error(f"Failed to send message to user {member.user.id}: {e}")
 
-            await reply_message.edit(f"Total Members: {done_count + failed_count}\nSuccessfully Sent: {done_count}\nFailed: {failed_count}")
+            await reply_message.edit(f"Successfully Message Sended To {done_count} Members\nFailed: {failed_count}\n\nTotal Members: {done_count + failed_count}")
 
         else:
-            await message.reply("Usage: /broadcast <message> or reply to a photo, video, or sticker with /broadcast")
+            await message.reply("Use: /broadcast <message> or reply to a photo, video, or sticker")
 
 
 
@@ -263,7 +263,7 @@ async def broadcast_to_all_users(client, message):
                 failed_count += 1
                 logger.error(f"Failed to send {media_type} to user {user_id}: {e}")
 
-        await reply_message.edit(f"Total Users: {done_count + failed_count}\nSuccessfully Sent: {done_count}\nFailed: {failed_count}")
+        await reply_message.edit(f"Type: {media_type}\n\nTotal Users: {done_count + failed_count}\nSuccess: {done_count}\nFailed: {failed_count}")
     else:
         if len(command_parts) > 1:
             custom_message = command_parts[1]
@@ -279,9 +279,9 @@ async def broadcast_to_all_users(client, message):
                     failed_count += 1
                     logger.error(f"Failed to send message to user {user_id}: {e}")
 
-            await reply_message.edit(f"Total Users: {done_count + failed_count}\nSuccessfully Sent: {done_count}\nFailed: {failed_count}")
+            await reply_message.edit(f"Type: Text\n\nTotal Users: {done_count + failed_count}\nSuccess: {done_count}\nFailed: {failed_count}")
         else:
-            await message.reply("Usage: /bc <message> or reply to a photo, video, or sticker with /bc")
+            await message.reply("Use: /bc <message> or reply to a photo, video, or sticker")
 
 
 START_BTN = [
@@ -384,7 +384,7 @@ async def callback(client, query):
             chat_id=query.message.chat.id,
             action=enums.ChatAction.TYPING
         )
-        await asyncio.sleep(2)
+        await asyncio.sleep(1)
         
         await query.edit_message_text(
             text=HELP_MSG,
