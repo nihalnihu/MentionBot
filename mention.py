@@ -20,6 +20,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
+# Initialize Flask
 bot = Flask(__name__)
 
 @bot.route('/')
@@ -33,8 +34,9 @@ def health_check():
 def run_flask():
     bot.run(host='0.0.0.0', port=8080)
 
-def run_app():
-    app = Client("TGBot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
+# Initialize Pyrogram Client
+app = Client("TGBot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
+
 
 
     
@@ -380,9 +382,9 @@ async def users(client, message):
     await message.reply(f"Users: {user_count}")
 
 
-app.run()
-
+# Start the Flask server in a separate thread
 if __name__ == '__main__':
     threading.Thread(target=run_flask).start()
-    run_app()
-
+    
+    # Start the Pyrogram Client
+    app.run()
