@@ -3,7 +3,6 @@ import asyncio
 import logging
 import stats
 import os
-from os import environ
 from aiohttp import web as webserver
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup, CallbackQuery
 from stats import check_subscription
@@ -19,6 +18,25 @@ logger = logging.getLogger(__name__)
 
 
 app = Client("mention bot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
+
+
+# Define the web server
+async def start_web_server():
+    async def root_route_handler(request):
+        return webserver.json_response({"message": "TGBot is running"})
+
+    routes = webserver.RouteTableDef()
+    routes.get("/")(root_route_handler)
+
+    web_app = webserver.Application(client_max_size=30000000)
+    web_app.add_routes(routes)
+    
+    runner = webserver.AppRunner(web_app)
+    await runner.setup()
+    site = webserver.TCPSite(runner, "0.0.0.0", int(PORT_CODE))
+    await site.start()
+
+    logger.info(f"Web server running on port {PORT_CODE}")
 
 
     
@@ -369,4 +387,12 @@ async def users(client, message):
   await message.reply(f"Users: {user_count}")
 
 
-app.run()
+
+# Entry point
+async def main():
+    await start_web_server()
+    await app.start()
+    logger.info("Bot started")
+
+if __name__ == "__main__":
+    asyncio.run(main())
