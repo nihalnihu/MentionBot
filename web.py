@@ -30,7 +30,10 @@ def run_flask_app():
     flask_app.run(host='0.0.0.0', port=port)
 
 def run_pyrogram_bot():
-    pyrogram_app.run()
+    try:
+        pyrogram_app.run()
+    except Exception as e:
+        flask_app.logger.error(f"An error occurred with Pyrogram: {e}")
 
 def signal_handler(sig, frame):
     print('Signal received, shutting down...')
