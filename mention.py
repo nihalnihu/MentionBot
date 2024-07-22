@@ -56,13 +56,14 @@ async def is_user_admin(chat_id, user_id):
 @app.on_message(filters.command("mention") & filters.group)
 async def mention(client, message):
     user_id = message.from_user.id
-    mention = message.from_user.mention
     chat_id = message.chat.id
+    mention = message.from_user.mention
     if not already_db(user_id):
         await message.reply_text(
             text=f"Hey {mention}❗ First Start Me In PM"
         )
         return
+    add_group(chat_id)
     
     logger.info(f"Chat ID: {chat_id}, User ID: {user_id}")
 
@@ -112,6 +113,8 @@ async def broadcast_to_members(client, message):
             text=f"Hey {mention}❗ First Start Me In PM"
         )
         return
+        
+    add_group(chat_id)
 
     logger.info(f"Chat ID: {chat_id}, User ID: {user_id}")
 
@@ -407,10 +410,13 @@ async def callback(client, query):
     elif data == 'CLOSE':
             await query.message.delete()
 
-@app.on_message(filters.command("users") & filters.private & filters.user(OWNER_ID))
+@app.on_message(filters.command("stats") & filters.private & filters.user(OWNER_ID))
 async def users(client, message):
+    StatsLod = await message.reply_text("Getting...")
     ALL_USERS = all_users()
-    await message.reply(f"Users: {ALL_USERS}")
+    ALL_GROUPS = all_groups()
+    await asyncio.sleep(1)
+    await StatsLod.edit_text(f"Users: {ALL_USERS}\nGroups: {ALL_GROUPS}")
 
 
 # Start the Flask server in a separate thread
