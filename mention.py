@@ -352,13 +352,9 @@ FSUB_BTN = [[
            ]
 
 
-CMD = {}
-
-
 
 @app.on_message(filters.command("start") & filters.private)
 async def startt(client, start):
-    CMD_ID = start.id
     
     user_id = start.from_user.id
     username = start.from_user.mention
@@ -381,9 +377,15 @@ async def startt(client, start):
 
 
 @app.on_callback_query()
-async def callback(Client, query):
+async def callback(client, query):
     data = query.data
     if data == 'HELP':
+        await client.send_chat_action(
+            chat_id=message.chat.id,
+            action=enums.ChatAction.TYPING
+        )
+        await asyncio.sleep(2)
+        
         await query.edit_message_text(
             text=HELP_MSG,
             reply_markup=InlineKeyboardMarkup(HELP_BTN)
@@ -392,8 +394,6 @@ async def callback(Client, query):
 
     elif data == 'CLOSE':
             await query.message.delete()
-            await Client.delete.messages(query.chat.id, CMD_ID)
-            CMD = {}
 
 @app.on_message(filters.command("users") & filters.private & filters.user(OWNER_ID))
 async def users(client, message):
