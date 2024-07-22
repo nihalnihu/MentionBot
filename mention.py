@@ -2,19 +2,16 @@ from pyrogram import Client, filters, enums
 import asyncio
 import logging
 import stats
-import os
-from pyrogram.errors import FloodWait
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup, CallbackQuery
 from stats import check_subscription
 
+api_id = 25731065
+api_hash = 'be534fb5a5afd8c3308c9ca92afde672'
+bot_token = '6865008064:AAHfTdmqXhrd-P-2Og2Mu-I5z9_Rh9WQMCY'                                                          
+OWNER_ID = 7220858548
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.INFO)                    
 logger = logging.getLogger(__name__)
-
-api_id = os.getenv('API_ID')
-api_hash = os.getenv('API_HASH')
-bot_token = os.getenv('BOT_TOKEN', '6865008064:AAFROMPKO3aJ7LOP7L6xwnnzw1o6np7KupU')                                                     
-OWNER_ID = os.getenv('OWNER_ID')
                                                            # Initialize the bot
 app = Client("mention_bot", api_id=api_id, api_hash=api_hash, bot_token=bot_token)
 
@@ -358,6 +355,13 @@ async def callback(bot, query):
     elif data == 'CLOSE':
         await query.message.delete()
 
+
+
+
+
+
+
+
 @app.on_message(filters.command("users") & filters.private & filters.user(OWNER_ID))
 async def users(client, message):
     user_count = stats.get_user_count()
@@ -365,11 +369,4 @@ async def users(client, message):
 
 
 
-
-
-
-if __name__ == "__main__":
-    try:
-        app.run()
-    except Exception as e:
-        logger.error(f"An error occurred: {e}")
+app.run()
