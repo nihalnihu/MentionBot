@@ -3,6 +3,7 @@ import asyncio
 import logging
 import stats
 import os
+from pyrogram.errors import FloodWait
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup, CallbackQuery
 from stats import check_subscription
 
@@ -358,11 +359,6 @@ async def callback(bot, query):
 
 
 
-
-
-
-
-
 @app.on_message(filters.command("users") & filters.private & filters.user(OWNER_ID))
 async def users(client, message):
     user_count = stats.get_user_count()
@@ -370,8 +366,20 @@ async def users(client, message):
 
 
 
-def run_bot():
-    app.run()  # Starts the bot
+
+
+async def start_bot():
+    while True:
+        try:
+            await app.start()
+            print("Bot started successfully!")
+            await app.idle()
+        except FloodWait as e:
+            print(f"Flood wait exception: {e}. Waiting for {e.x} seconds.")
+            await asyncio.sleep(e.x)  # Wait for the specified duration
+        except Exception as e:
+            print(f"An unexpected error occurred: {e}")
+            await asyncio.sleep(60)  # Wait a bit before retrying to avoid rapid failure loops
 
 if __name__ == "__main__":
-    run_bot()
+    asyncio.run(start_bot())
