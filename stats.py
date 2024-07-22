@@ -26,6 +26,17 @@ def get_all_user_ids():
     user_data = load_user_data()
     return list(user_data.keys())
 
+
+async def check_subscription(user_id):
+    try:
+        chat_member = await app.get_chat_member(CHANNEL_ID, user_id)
+        return chat_member.status in [ChatMemberStatus.MEMBER, ChatMemberStatus.ADMINISTRATOR, ChatMemberStatus.OWNER]
+    except UserNotParticipant:
+        return False
+    except Exception as e:
+        print(f"Error checking subscription: {e}")
+        return False
+
 if __name__ == "__main__":
     import sys
     if len(sys.argv) > 1:
