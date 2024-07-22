@@ -381,7 +381,7 @@ async def startt(client, start):
 
 
 @app.on_callback_query()
-async def callback(bot, query):
+async def callback(Client, query):
     data = query.data
     if data == 'HELP':
         await query.edit_message_text(
@@ -392,7 +392,7 @@ async def callback(bot, query):
 
     elif data == 'CLOSE':
             await query.message.delete()
-            await bot.delete.messages(query.chat.id, CMD_ID)
+            await Client.delete.messages(query.chat.id, CMD_ID)
             CMD = {}
 
 @app.on_message(filters.command("users") & filters.private & filters.user(OWNER_ID))
