@@ -373,7 +373,8 @@ async def start_bot():
         try:
             await app.start()
             print("Bot started successfully!")
-            await app.idle()
+            while True:
+                await asyncio.sleep(10)  # Keep the bot running
         except FloodWait as e:
             print(f"Flood wait exception: {e}. Waiting for {e.x} seconds.")
             await asyncio.sleep(e.x)  # Wait for the specified duration
