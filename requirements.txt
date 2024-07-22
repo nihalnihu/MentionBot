@@ -1,3 +1,4 @@
 pyrogram
 TgCrypto
 Flask
+aiohttp==3.9.5
