@@ -1,6 +1,6 @@
 from pymongo import MongoClient
 
-MONGO = "mongodb+srv://24:24@cluster0.cw3bc2z.mongodb.net/?retryWrites=true&w=majority"
+MONGO = "mongodb+srv://Nk:nk@cluster0.chzrcq5.mongodb.net/?retryWrites=true&w=majority"
 
 client = MongoClient(MONGO)
 
