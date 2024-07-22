@@ -301,15 +301,36 @@ START_TXT = """
 ᴄʟɪᴄᴋ ᴛʜᴇ ʜᴇʟᴘ ʙᴜᴛᴛᴏɴ ᴛᴏ ᴋɴᴏᴡ ᴍᴏʀᴇ!
 
 """
+
+FSUB_MSG = """
+"Hᴇʏ {}!
+
+Pʟᴇᴀsᴇ ᴊᴏɪɴ ᴏᴜʀ ᴄʜᴀɴɴᴇʟ ᴛᴏ ᴜsᴇ ᴍᴇ !㋛︎
+
+"""
+
+FSUB_BTN = [[
+  InlineKeyboardButton('Join Now', url='t.me/TG_BotCreator')
+]]
+
+
 @app.on_message(filters.command("start") & filters.private)
 async def start(client, message):
-    user_id = message.from_user.id
-    username = message.from_user.mention
-    stats.add_user(user_id)
-    await message.reply_text(
+  user_id = message.from_user.id
+  username = message.from_user.mention
+  stats.add_user(user_id)is_subscribed = await check_subscription(user_id)
+  is_subscribed = await check_subscription(user_id)
+
+    if is_subscribed:
+      await message.reply_text(
         text=START_TXT.format(username),
         reply_markup=InlineKeyboardMarkup(START_BTN)
     )
+    else:
+      await message.reply_text(
+        text=FSUB_MSG.format(username),
+        reply_markup=InlineKeyboardMarkup(FSUB_BTN)
+      )
 
 
 @app.on_callback_query()
