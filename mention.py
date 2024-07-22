@@ -361,7 +361,7 @@ Pʟᴇᴀsᴇ ᴊᴏɪɴ ᴏᴜʀ ᴄʜᴀɴɴᴇʟ ᴛᴏ ᴜsᴇ ᴍᴇ !㋛�
 FSUB_BTN = [[
     InlineKeyboardButton('❗Join Now ❗', url='t.me/TG_BotCreator')
 ],[
-    InlineKeyboardButton('Try Again', url='https://t.me/TG_GRPMentionBot?start=start')
+    InlineKeyboardButton('Try Again', url='https://t.me/TG_GroupMentionBot?start=start')
     
 ]
            
