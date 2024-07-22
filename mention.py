@@ -7,6 +7,9 @@ from pyrogram.errors import FloodWait
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup, CallbackQuery
 from stats import check_subscription
 
+
+app = Flask(__name__)
+
 api_id = os.getenv('API_ID')
 api_hash = os.getenv('API_HASH')
 bot_token = os.getenv('BOT_TOKEN', '6865008064:AAFROMPKO3aJ7LOP7L6xwnnzw1o6np7KupU')                                                     
@@ -368,19 +371,19 @@ async def users(client, message):
 
 
 
-async def start_bot():
-    while True:
-        try:
-            await app.start()
-            print("Bot started successfully!")
-            while True:
-                await asyncio.sleep(10)  # Keep the bot running
-        except FloodWait as e:
-            print(f"Flood wait exception: {e}. Waiting for {e.x} seconds.")
-            await asyncio.sleep(e.x)  # Wait for the specified duration
-        except Exception as e:
-            print(f"An unexpected error occurred: {e}")
-            await asyncio.sleep(60)  # Wait a bit before retrying to avoid rapid failure loops
+
+
+@app.route('/health', methods=['GET'])
+def health_check():
+    return "OK", 200
+
+def run_flask_app():
+    port = int(os.getenv('PORT', 8080))
+    app.run(host='0.0.0.0', port=port)
+
+def run_bot():
+    bot.run()
 
 if __name__ == "__main__":
-    asyncio.run(start_bot())
+    threading.Thread(target=run_flask_app).start()
+    run_bot()
