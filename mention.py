@@ -365,7 +365,6 @@ async def startt(client, start):
             text=START_TXT.format(username),
             reply_markup=InlineKeyboardMarkup(START_BTN)
         )
-        add_user(start.from_user.id)
         
     else:
         FS = await start.reply_text(
