@@ -8,7 +8,7 @@ import subprocess
 from flask import Flask
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup, CallbackQuery
 from stats import check_subscription
-from database import add_user, add_group, all_users, all_groups, users, remove_user, already_db, get_all_group_ids
+from database import add_user, add_group, all_users, all_groups, users, remove_user, already_db, get_all_user_ids, get_all_group_ids
 
 # Environment Variables
 API_ID = os.getenv('API_ID')
