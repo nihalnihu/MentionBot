@@ -409,7 +409,7 @@ STATS_BTN = [
 
 G_U_BTN = InlineKeyboardMarkup(
     [[
-        InlineKeyboardButton('Back', callback_data='STATS_BACK'),
+        InlineKeyboardButton('Back', callback_data='stats'),
         InlineKeyboardButton('Close', callback_data='CLOSE')
     ]]
 )
@@ -532,14 +532,18 @@ async def callback(client, query):
         await query.edit_message_text(text=f"Stats for {app.me.mention}\n🙋‍♂️ Users : {ALL_USERS}\n👥 Groups : {ALL_GROUPS}",
                                       reply_markup=InlineKeyboardMarkup(STATS_BTN)
                                      )
-        
 
+    elif query.data == 'stats':
+        ALL_USERS = all_users()
+        ALL_GROUPS = all_groups()
+    
+        await query.edit_message_text(
+            text=f"Stats for {client.me.mention}\n🙋‍♂️ Users : {ALL_USERS}\n👥 Groups : {ALL_GROUPS}"
+        )
 
 @app.on_message(filters.command("stats") & filters.private & filters.user(OWNER_ID))
 async def stats(client, message):
-    ALL_USERS = all_users()  # Fetch the number of users
-    ALL_GROUPS = all_groups()  # Fetch the number of groups
-
+    
     await message.reply_text(
         text=f"Stats for {client.me.mention}\n🙋‍♂️ Users : {ALL_USERS}\n👥 Groups : {ALL_GROUPS}",
         reply_markup=InlineKeyboardMarkup([
