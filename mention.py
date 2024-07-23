@@ -400,10 +400,20 @@ FSUB_BTN = [[
            ]
 
 STATS_BTN = [
-    [InlineKeyboardButton('User', callback_data='users')],
-    [InlineKeyboardButton('Group', callback_data='groups')]
+    [
+        InlineKeyboardButton('User', callback_data='users'),
+        InlineKeyboardButton('Group', callback_data='groups')
+    ]
 ]
              
+
+G_U_BTN = InlineKeyboardMarkup(
+    [[
+        InlineKeyboardButton('Back', callback_data='STATS_BACK'),
+        InlineKeyboardButton('Close', callback_data='CLOSE')
+    ]]
+)
+
 
 @app.on_message(filters.command("start") & filters.group)
 def startt(client, gstart):
@@ -520,7 +530,8 @@ async def callback(client, query):
 
     elif data == 'STATS_BACK':
         await query.edit_message_text(text=f"Stats for {app.me.mention}\n🙋‍♂️ Users : {ALL_USERS}\n👥 Groups : {ALL_GROUPS}",
-                                      reply_markup=STATS_BTN)
+                                      reply_markup=InlineKeyboardMarkup(STATS_BTN)
+                                     )
         
 
 
