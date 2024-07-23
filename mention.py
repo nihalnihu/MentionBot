@@ -462,7 +462,7 @@ async def callback(client, query):
                 user_list.append(f"[User {user_id}] (Error fetching profile)")
 
         user_text = '\n'.join(user_list) or "No users found."
-        await query.message.edit_text(text=user_text, parse_mode="markdown")
+        await query.message.edit_text(text=user_text)
     
     elif data == 'groups':
         # Fetch all groups from the database
@@ -481,7 +481,7 @@ async def callback(client, query):
                 group_list.append(f"[Group {chat_id}] (Error fetching info)")
 
         group_text = '\n'.join(group_list) or "No groups found."
-        await query.message.edit_text(text=group_text, parse_mode="markdown")
+        await query.message.edit_text(text=group_text)
     
     elif data == 'HELP':
         await client.send_chat_action(
