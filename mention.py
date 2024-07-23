@@ -405,6 +405,8 @@ STATS_BTN = [
     [
         InlineKeyboardButton('ᴜsᴇʀ', callback_data='users'),
         InlineKeyboardButton('ɢʀᴏᴜᴘ', callback_data='groups')
+    ],[
+        InlineKeyboardButton('🚫 ᴄʟᴏsᴇ', callback_data='CLOSE')
     ]
 ]
              
@@ -534,8 +536,13 @@ async def callback(client, query):
         await query.edit_message_text(
             text=f"Stats for {client.me.mention}\n🙋‍♂️ Users : {ALL_USERS}\n👥 Groups : {ALL_GROUPS}",
             reply_markup=InlineKeyboardMarkup(
-                [[InlineKeyboardButton('ᴜsᴇʀ', callback_data='users'),
-                  InlineKeyboardButton('ɢʀᴏᴜᴘ', callback_data='groups')]]
+                [
+                    [InlineKeyboardButton('ᴜsᴇʀ', callback_data='users'),
+                     InlineKeyboardButton('ɢʀᴏᴜᴘ', callback_data='groups')],
+                [
+                    InlineKeyboardButton('🚫 ᴄʟᴏsᴇ', callback_data='CLOSE')  
+                ]
+                ]
             )
         )
         
