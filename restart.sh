@@ -5,7 +5,7 @@ REPO_URL="${REPO_URL:-https://github.com/nihalnihu/MentionBot.git}"
 BRANCH_NAME="${BRANCH_NAME:-main}"
 REPO_DIR="${REPO_DIR:-MentionBot}"
 TELEGRAM_BOT_TOKEN="${BOT_TOKEN}"
-CHAT_ID="${CHAT_ID:-7431802835}"
+CHAT_ID="${CHAT_ID:--1002237358744}"
 
 # Check if the repository directory exists and delete it
 if [ -d "$REPO_DIR" ]; then
