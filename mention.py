@@ -114,17 +114,17 @@ async def mention(client, message):
 
     if len(command_parts) > 1:
         custom_message = command_parts[1]
-        mention_chunks = [", ".join(mentions[i:i + 5]) for i in range(0, len(mentions), 5)]
+        mention_chunks = [", ".join(mentions[i:i + 10]) for i in range(0, len(mentions), 10)]
         for chunk in mention_chunks:
             full_message = f"{custom_message}\n\n{chunk}"
             await message.reply(full_message)
-            await asyncio.sleep(2)
+            await asyncio.sleep(3)
     else:
-        mention_chunks = [", ".join(mentions[i:i + 5]) for i in range(0, len(mentions), 5)]
+        mention_chunks = [", ".join(mentions[i:i + 10]) for i in range(0, len(mentions), 10)]
         for chunk in mention_chunks:
             full_message = chunk
             await message.reply(full_message, disable_web_page_preview=True)
-            await asyncio.sleep(1)
+            await asyncio.sleep(3)
 
 
 
