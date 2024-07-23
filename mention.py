@@ -537,13 +537,18 @@ async def callback(client, query):
 
 @app.on_message(filters.command("stats") & filters.private & filters.user(OWNER_ID))
 async def stats(client, message):
-    ALL_USERS = all_users()
-    ALL_GROUPS = all_groups()
-    
-    await message.reply_text(text=f"Stats for {app.me.mention}\n🙋‍♂️ Users : {ALL_USERS} \n👥 Groups : {ALL_GROUPS}",
-                             reply_markup=InlineKeyboardMarkup([[
-                                 InlineKeyboardButton('User', callback_data='users'),
-                                 InlineKeyboardButton('Group', callback_data='groups')]]))
+    ALL_USERS = all_users()  # Fetch the number of users
+    ALL_GROUPS = all_groups()  # Fetch the number of groups
+
+    await message.reply_text(
+        text=f"Stats for {client.me.mention}\n🙋‍♂️ Users : {ALL_USERS}\n👥 Groups : {ALL_GROUPS}",
+        reply_markup=InlineKeyboardMarkup([
+            [InlineKeyboardButton('User', callback_data='users'),
+             InlineKeyboardButton('Group', callback_data='groups')]
+        ])
+    )
+
+
 
 
 @app.on_message(filters.command("group_bc") & filters.private & filters.user(OWNER_ID))
