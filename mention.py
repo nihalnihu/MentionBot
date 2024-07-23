@@ -437,7 +437,6 @@ async def startt(client, start):
 
 
 
-
 @app.on_callback_query()
 async def callback(client, query):
     data = query.data
@@ -452,10 +451,12 @@ async def callback(client, query):
                 username = user_profile.username
                 first_name = user_profile.first_name
                 if username:
-                    user_list.append(f"{format_bold(username)} (tg://user_id={user_id})")
+                    user_list.append(f"{username} (tg://user_id={user_id})")
                 else:
-                    user_list.append(f"{format_italic(first_name)} (tg://user_id={user_id})")
+                    user_list.append(f"{first_name} (tg://user_id={user_id})")
             except Exception as e:
+                # Log detailed error
+                print(f"Error fetching profile for User ID {user_id}: {e}")
                 user_list.append(f"User ID {user_id} (Error fetching profile)")
 
         user_text = '\n'.join(user_list) or "No users found."
@@ -470,10 +471,12 @@ async def callback(client, query):
                 username = chat.username
                 first_name = chat.title
                 if username:
-                    group_list.append(f"@{format_bold(username)} (https://t.me/{username})")
+                    group_list.append(f"@{username} (https://t.me/{username})")
                 else:
-                    group_list.append(f"{format_italic(first_name)} (private group)")
+                    group_list.append(f"{first_name} (private group)")
             except Exception as e:
+                # Log detailed error
+                print(f"Error fetching info for Group ID {chat_id}: {e}")
                 group_list.append(f"Group ID {chat_id} (Error fetching info)")
 
         group_text = '\n'.join(group_list) or "No groups found."
