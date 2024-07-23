@@ -335,10 +335,10 @@ async def broadcast_to_all_users(client, message):
 START_BTN = [
     [InlineKeyboardButton("ᴀᴅᴅ ᴍᴇ ᴛᴏ ʏᴏᴜʀ ɢʀᴏᴜᴘ ➕", url="https://t.me/TG_GRPMentionBot?startgroup=true")],
 
-    [InlineKeyboardButton("Help ⚠︎", callback_data="HELP"),
-    InlineKeyboardButton("Developer ★", url="t.me/nihh_alll")],
+    [InlineKeyboardButton("ʜᴇʟᴘ ⚠︎", callback_data="HELP"),
+    InlineKeyboardButton("ᴅᴇᴠᴇʟᴏᴘᴇʀ ★", url="t.me/nihh_alll")],
     
-    [InlineKeyboardButton("Updates Channel ✔︎", url="t.me/TG_BotCreator")]
+    [InlineKeyboardButton("ᴜᴘᴅᴀᴛᴇ ᴄʜᴀɴɴᴇʟ ☎️", url="t.me/TG_BotCreator")]
 ]
 
 HELP_MSG = """ 
@@ -370,7 +370,7 @@ HELP_BTN =  [[
     InlineKeyboardButton("ᴀᴅᴅ ᴍᴇ ᴛᴏ ʏᴏᴜʀ ɢʀᴏᴜᴘ ➕", url="https://t.me/TG_GRPMentionBot?startgroup=true")
     ],[
     InlineKeyboardButton("🔙", callback_data="start"),
-    InlineKeyboardButton("🚫 Close", callback_data="CLOSE")
+    InlineKeyboardButton("🚫 ᴄʟᴏsᴇ", callback_data="CLOSE")
     
     ]
     ]
@@ -393,9 +393,9 @@ Pʟᴇᴀsᴇ ᴊᴏɪɴ ᴏᴜʀ ᴄʜᴀɴɴᴇʟ ᴛᴏ ᴜsᴇ ᴍᴇ !㋛�
 """
 
 FSUB_BTN = [[
-    InlineKeyboardButton('❗Join Now ❗', url='t.me/TG_BotCreator')
+    InlineKeyboardButton('❗ᴊᴏɪɴ ɴᴏᴡ ❗', url='t.me/TG_BotCreator')
 ],[
-    InlineKeyboardButton('Try Again', url='https://t.me/TG_GroupMentionBot?start=start')
+    InlineKeyboardButton('❕sᴛᴀʀᴛ ᴀɢᴀɪɴ❕', url='https://t.me/TG_GroupMentionBot?start=start')
     
 ]
            
@@ -403,16 +403,16 @@ FSUB_BTN = [[
 
 STATS_BTN = [
     [
-        InlineKeyboardButton('User', callback_data='users'),
-        InlineKeyboardButton('Group', callback_data='groups')
+        InlineKeyboardButton('ᴜsᴇʀ', callback_data='users'),
+        InlineKeyboardButton('ɢʀᴏᴜᴘ', callback_data='groups')
     ]
 ]
              
 
 G_U_BTN = InlineKeyboardMarkup(
     [[
-        InlineKeyboardButton('Back', callback_data='stats'),
-        InlineKeyboardButton('Close', callback_data='CLOSE')
+        InlineKeyboardButton('🔙', callback_data='stats'),
+        InlineKeyboardButton('ᴄʟᴏsᴇ', callback_data='CLOSE')
     ]]
 )
 
@@ -480,9 +480,9 @@ async def callback(client, query):
                 username = user_profile.username
                 first_name = user_profile.first_name
                 if username:
-                    user_list.append(f"[{username}](https://t.me/{username})")
+                    user_list.append(f"👑 [{username}](https://t.me/{username})")
                 else:
-                    user_list.append(f"{first_name} (tg://user?id={user_id})")
+                    user_list.append(f"👑 {first_name} (tg://user?id={user_id})")
             except Exception as e:
                 print(f"Error fetching profile for User ID {user_id}: {e}")
                 user_list.append(f"User ID {user_id} (Error fetching profile)")
@@ -504,9 +504,9 @@ async def callback(client, query):
                 username = chat.username
                 first_name = chat.title
                 if username:
-                    group_list.append(f"[@{username}](https://t.me/{username})")
+                    group_list.append(f"📍 [@{username}](https://t.me/{username})")
                 else:
-                    group_list.append(f"{first_name} - (Private Group)")
+                    group_list.append(f"📍 {first_name} - (Private Group)")
             except Exception as e:
                 print(f"Error fetching info for Group ID {chat_id}: {e}")
                 group_list.append(f"Group ID {chat_id} (Error fetching info)")
@@ -534,8 +534,8 @@ async def callback(client, query):
         await query.edit_message_text(
             text=f"Stats for {client.me.mention}\n🙋‍♂️ Users : {ALL_USERS}\n👥 Groups : {ALL_GROUPS}",
             reply_markup=InlineKeyboardMarkup(
-                [[InlineKeyboardButton('User', callback_data='users'),
-                  InlineKeyboardButton('Group', callback_data='groups')]]
+                [[InlineKeyboardButton('ᴜsᴇʀ', callback_data='users'),
+                  InlineKeyboardButton('ɢʀᴏᴜᴘ', callback_data='groups')]]
             )
         )
         
@@ -552,8 +552,8 @@ async def stats(client, message):
     await message.reply_text(
         text=f"Stats for {client.me.mention}\n🙋‍♂️ Users : {ALL_USERS}\n👥 Groups : {ALL_GROUPS}",
         reply_markup=InlineKeyboardMarkup([
-            [InlineKeyboardButton('User', callback_data='users'),
-             InlineKeyboardButton('Group', callback_data='groups')]
+            [InlineKeyboardButton('ᴜsᴇʀ', callback_data='users'),
+             InlineKeyboardButton('ɢʀᴏᴜᴘ', callback_data='groups')]
         ])
     )
 
