@@ -4,7 +4,6 @@ import logging
 import stats
 import os
 import threading
-import callback
 import subprocess
 from flask import Flask
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup, CallbackQuery
