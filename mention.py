@@ -526,14 +526,23 @@ async def callback(client, query):
 
 @app.on_message(filters.command("stats") & filters.private & filters.user(OWNER_ID))
 async def stats(client, message):
+    # Get the counts of users and groups
     ALL_USERS = all_users()
     ALL_GROUPS = all_groups()
     
+    # Prepare the response text
+    response_text = (
+        f"Stats for {app.me.mention}\n"
+        f"🙋‍♂️ Users: {ALL_USERS}\n"
+        f"👥 Groups: {ALL_GROUPS}"
+    )
+    
+    # Reply to the message with stats and buttons
     await message.reply_text(
-        text=f"Stats for {app.me.mention}\n🙋‍♂️ Users : {ALL_USERS}\n👥 Groups : {ALL_GROUPS}",
+        text=response_text,
         reply_markup=STATS_BTN
     )
-
+    
 
 
 @app.on_message(filters.command("group_bc") & filters.private & filters.user(OWNER_ID))
