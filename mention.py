@@ -72,7 +72,7 @@ async def mention(client, message):
 
         await asyncio.sleep(60)
         await GOM_PM.delete()
-        await messgae.delete()
+        await message.delete()
         return
         
     add_group(chat.id)
@@ -128,7 +128,7 @@ async def broadcast_to_members(client, message):
         )
         await asyncio.sleep(60)
         await GO_PM.delete()
-        await messgae.delete()
+        await message.delete()
         return
         
     add_group(chat_id)
