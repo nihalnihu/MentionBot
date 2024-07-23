@@ -524,23 +524,30 @@ async def callback(client, query):
 
         
 
+
 @app.on_message(filters.command("stats") & filters.private & filters.user(OWNER_ID))
 async def stats(client, message):
-    # Get the counts of users and groups
-    ALL_USERS = all_users()
-    ALL_GROUPS = all_groups()
-    
-    # Prepare the response text
-    response_text = (
-        f"Stats for {app.me.mention}\n"
-        f"🙋‍♂️ Users: {ALL_USERS}\n"
-        f"👥 Groups: {ALL_GROUPS}"
-    )
-    
-    # Reply to the message with stats and buttons
-    await message.reply_text(
-        text=response_text
-    )
+    try:
+        # Get the counts of users and groups
+        ALL_USERS = all_users()  # Ensure this function is defined and imported correctly
+        ALL_GROUPS = all_groups()  # Ensure this function is defined and imported correctly
+
+        # Prepare the response text
+        response_text = (
+            f"Stats for {app.me.mention}\n"
+            f"🙋‍♂️ Users: {ALL_USERS}\n"
+            f"👥 Groups: {ALL_GROUPS}"
+        )
+
+        # Reply to the message with stats and buttons
+        await message.reply_text(
+            text=response_text,
+            reply_markup=STATS_BTN
+        )
+    except Exception as e:
+        # Log detailed error for debugging
+        print(f"An error occurred: {e}")
+        await message.reply_text("An error occurred while fetching stats.")
     
 
 
