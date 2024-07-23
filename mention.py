@@ -4,6 +4,7 @@ import logging
 import stats
 import os
 import threading
+import subprocess
 from flask import Flask
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup, CallbackQuery
 from stats import check_subscription
@@ -37,6 +38,15 @@ def run_flask():
 # Initialize Pyrogram Client
 app = Client("TGBot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
 
+
+
+
+@app.on_message(filters.command("restart") & filters.user(OWNER_ID))
+def update_and_restart(client, message):
+    RE = message.reply_text("Updating...")
+    subprocess.Popen(["python3", "restart.py"])
+    RE.delete()
+    message.reply_text(Bot Updated!)
 
 
     
