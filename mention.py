@@ -484,7 +484,7 @@ async def callback(client, query):
                 if username:
                     user_list.append(f"👑 [{username}](https://t.me/{username})")
                 else:
-                    user_list.append(f"👑 {first_name} (tg://user?id={user_id})")
+                    user_list.append(f"👑 [{first_name}](tg://user?id={user_id})")
             except Exception as e:
                 print(f"Error fetching profile for User ID {user_id}: {e}")
                 user_list.append(f"User ID {user_id} (Error fetching profile)")
