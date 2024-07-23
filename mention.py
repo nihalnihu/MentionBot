@@ -543,7 +543,8 @@ async def callback(client, query):
 
 @app.on_message(filters.command("stats") & filters.private & filters.user(OWNER_ID))
 async def stats(client, message):
-    
+    ALL_USERS = all_users()
+    ALL_GROUPS = all_groups()
     await message.reply_text(
         text=f"Stats for {client.me.mention}\n🙋‍♂️ Users : {ALL_USERS}\n👥 Groups : {ALL_GROUPS}",
         reply_markup=InlineKeyboardMarkup([
