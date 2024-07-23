@@ -117,8 +117,8 @@ async def mention(client, message):
             else:
                 mentions.append(f"[{member.user.first_name}](tg://user?id={member.user.id})")
 
-    mention_chunks = [", ".join(mentions[i:i + 5]) for i in range(0, len(mentions), 5)]
-    delay_between_messages = 1  # Delay between each message
+    mention_chunks = [", ".join(mentions[i:i + 10]) for i in range(0, len(mentions), 10)]
+    delay_between_messages = 2  # Delay between each message
     delay_between_chunks = 30  # Delay between each chunk to manage rate limits
 
     async def send_mentions(chunk):
