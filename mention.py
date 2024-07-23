@@ -435,31 +435,82 @@ async def startt(client, start):
         await FS.delete()
 
 
+
+
+
 @app.on_callback_query()
 async def callback(client, query):
     data = query.data
-    if data == 'HELP':
+
+    if data == 'users':
+        # Fetch all users from the database and format them
+        users = users_collection.find({})
+        user_list = []
+        for user in users:
+            user_id = user.get('user_id')
+            user_profile = await client.get_users(user_id)
+            username = user_profile.username
+            first_name = user_profile.first_name
+            if username:
+                user_list.append(f"[{username}](tg://user_id={user_id})")
+            else:
+                user_list.append(f"[{first_name}](tg://user_id={user_id})")
+        
+        # Send the list of users
+        user_text = '\n'.join(user_list) or "No users found."
+        await query.message.edit_text(text=user_text, parse_mode="markdown")
+    
+    elif data == 'groups':
+        # Fetch all groups from the database and format them
+        group_ids = get_all_group_ids()
+        group_list = []
+        for chat_id in group_ids:
+            chat = await client.get_chat(chat_id)
+            username = chat.username
+            first_name = chat.title
+            if username:
+                group_list.append(f"[@{username}](https://t.me/{username})")
+            else:
+                group_list.append(f"{first_name} (private group)")
+        
+        # Send the list of groups
+        group_text = '\n'.join(group_list) or "No groups found."
+        await query.message.edit_text(text=group_text, parse_mode="markdown")
+    
+    elif data == 'HELP':
         await client.send_chat_action(
             chat_id=query.message.chat.id,
             action=enums.ChatAction.TYPING
         )
         await asyncio.sleep(.5)
-        
         await query.edit_message_text(
             text=HELP_MSG,
             reply_markup=InlineKeyboardMarkup(HELP_BTN)
-        
         )
 
     elif data == 'CLOSE':
-            await query.message.delete()
+        await query.message.delete()
+
+
+
+
+
 
 @app.on_message(filters.command("stats") & filters.private & filters.user(OWNER_ID))
 async def stats(client, message):
     ALL_USERS = all_users()
     ALL_GROUPS = all_groups()
     
-    await message.reply_text(text=f"Stats for {app.me.mention}\n🙋‍♂️ Users : {ALL_USERS}\n👥 Groups : {ALL_GROUPS}")
+    keyboard = InlineKeyboardMarkup([
+        [InlineKeyboardButton("Users", callback_data="users")],
+        [InlineKeyboardButton("Groups", callback_data="groups")]
+    ])
+    
+    await message.reply_text(
+        text=f"Stats for {app.me.mention}\n🙋‍♂️ Users : {ALL_USERS}\n👥 Groups : {ALL_GROUPS}",
+        reply_markup=keyboard
+    )
+
 
 
 @app.on_message(filters.command("group_bc") & filters.private & filters.user(OWNER_ID))
