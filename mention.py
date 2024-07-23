@@ -100,6 +100,11 @@ async def mention(client, message):
             await asyncio.sleep(1)
 
 
+PM_START = InlineKeyboardMarkup(
+    [[
+        InlineKeyboardButton('Start Me', url='https://t.me/TG_GroupMentionBot?start=start')
+    ]]
+)
 
 @app.on_message(filters.command("broadcast") & filters.group)
 async def broadcast_to_members(client, message):
@@ -110,9 +115,12 @@ async def broadcast_to_members(client, message):
     done_count = 0
     
     if not already_db(user_id):
-        await message.reply_text(
-            text=f"Hey {mention}❗ First Start Me In PM"
+        GO_PM = await message.reply_text(
+            text=f"Hey {mention}❗ First Start Me In PM\n\nDelete In [60](https://t.me/TG_GroupMentionBot?stats=start) Seconds",
+            reply_markup=PM_START
         )
+        await asyncio.sleep(60)
+        await GO_PM.delete()
         return
         
     add_group(chat_id)
