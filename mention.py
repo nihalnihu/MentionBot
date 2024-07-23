@@ -369,7 +369,9 @@ HELP_MSG = """
 HELP_BTN =  [[
     InlineKeyboardButton("ᴀᴅᴅ ᴍᴇ ᴛᴏ ʏᴏᴜʀ ɢʀᴏᴜᴘ ➕", url="https://t.me/TG_GRPMentionBot?startgroup=true")
     ],[
-        InlineKeyboardButton("🚫 Close", callback_data="CLOSE")
+    InlineKeyboardButton("🔙", callback_data="start"),
+    InlineKeyboardButton("🚫 Close", callback_data="CLOSE")
+    
     ]
     ]
             
@@ -456,6 +458,7 @@ async def startt(client, start):
 @app.on_callback_query()
 async def callback(client, query):
     data = query.data
+    msg = query.message
 
     if data == 'users':
         user_records = users.find({})
@@ -514,12 +517,6 @@ async def callback(client, query):
 
     
     elif data == 'HELP':
-        await client.send_chat_action(
-            chat_id=query.message.chat.id,
-            action=enums.ChatAction.TYPING
-        )
-        await asyncio.sleep(0.3)
-        
         await query.message.edit_text(
             text=HELP_MSG,
             reply_markup=InlineKeyboardMarkup(HELP_BTN)
@@ -530,12 +527,7 @@ async def callback(client, query):
     elif data == 'CLOSE':
             await query.message.delete()
 
-    elif data == 'STATS_BACK':
-        await query.edit_message_text(text=f"Stats for {app.me.mention}\n🙋‍♂️ Users : {ALL_USERS}\n👥 Groups : {ALL_GROUPS}",
-                                      reply_markup=InlineKeyboardMarkup(STATS_BTN)
-                                     )
-
-    elif query.data == 'stats':
+    elif data == 'stats':
         ALL_USERS = all_users()
         ALL_GROUPS = all_groups()
     
@@ -545,7 +537,18 @@ async def callback(client, query):
                 [[InlineKeyboardButton('User', callback_data='users'),
                   InlineKeyboardButton('Group', callback_data='groups')]]
             ))
+        
+    elif data == 'start':
+        username = msg.from_user.mention
+        await query.edit_message_text(
+            text=START_TXT.format(username),
+            reply_markup=InlineKeyboardMarkup(START_BTN)
+        )
+        
+        
+        
 
+        
 @app.on_message(filters.command("stats") & filters.private & filters.user(OWNER_ID))
 async def stats(client, message):
     ALL_USERS = all_users()
