@@ -1,10 +1,11 @@
 #!/bin/bash
 
-# Specify the branch name
-BRANCH_NAME="main"
-
-# Specify the directory to clone into
-REPO_DIR="MentionBot"
+# Get environment variables
+REPO_URL="${REPO_URL:-https://github.com/nihalnihu/MentionBot.git}"
+BRANCH_NAME="${BRANCH_NAME:-main}"
+REPO_DIR="${REPO_DIR:-MentionBot}"
+TELEGRAM_BOT_TOKEN="${BOT_TOKEN}"
+CHAT_ID="${CHAT_ID:-7431802835}"
 
 # Check if the repository directory exists and delete it
 if [ -d "$REPO_DIR" ]; then
@@ -13,8 +14,8 @@ if [ -d "$REPO_DIR" ]; then
 fi
 
 # Clone the repository
-echo "Cloning repository..."
-git clone https://github.com/nihalnihu/MentionBot.git "$REPO_DIR" || { echo "Failed to clone repository"; exit 1; }
+echo "Cloning repository from $REPO_URL..."
+git clone "$REPO_URL" "$REPO_DIR" || { echo "Failed to clone repository"; exit 1; }
 
 # Navigate to the directory containing the Git repository
 cd "$REPO_DIR" || { echo "Failed to navigate to repository directory"; exit 1; }
@@ -30,6 +31,6 @@ pkill -f 'mention.py'  # Kill the existing bot process
 python mention.py &    # Start the bot again in the background
 
 # Notify after the bot has restarted
-curl -X POST "https://api.telegram.org/bot7431802835:AAF2Imho1M6AnmBpj9fXZlukVMBt_y_fOes/sendMessage" \
-     -d "chat_id=7431802835" \
+curl -X POST "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage" \
+     -d "chat_id=$CHAT_ID" \
      -d "text=The bot has been successfully updated and restarted."
