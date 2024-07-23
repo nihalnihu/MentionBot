@@ -273,8 +273,8 @@ async def broadcast_to_all_users(client, message):
             media = (text,)
 
         reply_message = await message.reply(f"Broadcasting {media_type}...")
-
-        user_ids = stats.get_all_user_ids()
+        
+        user_ids = get_all_user_ids()
         for user_id in user_ids:
             try:
                 if media_type == "photo":
@@ -317,7 +317,7 @@ async def broadcast_to_all_users(client, message):
             custom_message = command_parts[1]
             reply_message = await message.reply("Broadcasting text message...")
 
-            user_ids = stats.get_all_user_ids()
+            user_ids = get_all_user_ids()
             for user_id in user_ids:
                 try:
                     await client.send_message(user_id, custom_message, disable_web_page_preview=True)
