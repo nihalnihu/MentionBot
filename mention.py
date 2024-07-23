@@ -434,14 +434,14 @@ async def startt(client, start):
         await start.delete()
         await FS.delete()
 
-STATS_BTN = InlineKeyboardMarkup([
-        [InlineKeyboardButton("Users", callback_data="users")],
-        [InlineKeyboardButton("Groups", callback_data="groups")]
-    ])
+STATS_BTN = InlineKeyboardMarkup([[
+        InlineKeyboardButton("Users", callback_data="users"),
+        InlineKeyboardButton("Groups", callback_data="groups")
+]])
 G_U_BTN = InlineKeyboardMarkup(
     [
         [
-            InlineKeyboardButton('Back', callback_data='STATS_BACK')
+            InlineKeyboardButton('Back', callback_data='STATS_BACK'),
             InlineKeyboardButton('Close', callback_data='CLOSE')
         ]
         
