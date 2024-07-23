@@ -399,6 +399,14 @@ FSUB_BTN = [[
            
            ]
 
+STATS_BTN = [[
+    InlineKeyboardButton('User', callback_data='users')
+],[
+    InlineKeyboardButton('Group', callback_data='groups')
+    
+]
+             
+
 @app.on_message(filters.command("start") & filters.group)
 def startt(client, gstart):
     gstart.delete()   
@@ -435,31 +443,97 @@ async def startt(client, start):
         await FS.delete()
 
 
+
+
 @app.on_callback_query()
 async def callback(client, query):
     data = query.data
-    if data == 'HELP':
+
+    if data == 'users':
+        user_records = users.find({})
+        user_list = []
+        for user in user_records:
+            user_id = user.get('user_id')
+            try:
+                user_profile = await client.get_users(user_id)
+                username = user_profile.username
+                first_name = user_profile.first_name
+                if username:
+                    # Format link using username
+                    user_list.append(f"[{username}](https://t.me/{username})")
+                else:
+                    # Use user ID link (non-clickable outside Telegram)
+                    user_list.append(f"{first_name} (tg://user?id={user_id})")
+            except Exception as e:
+                # Log detailed error
+                print(f"Error fetching profile for User ID {user_id}: {e}")
+                user_list.append(f"User ID {user_id} (Error fetching profile)")
+
+        user_text = '\n\n'.join(user_list) or "No users found."
+        await query.message.edit_text(
+            text=user_text,
+            parse_mode=enums.ParseMode.MARKDOWN,
+            reply_markup=G_U_BTN
+        )
+    
+    elif data == 'groups':
+        group_ids = get_all_group_ids()
+        group_list = []
+        for chat_id in group_ids:
+            try:
+                chat = await client.get_chat(chat_id)
+                username = chat.username
+                first_name = chat.title
+                if username:
+                    # Format link using username
+                    group_list.append(f"[@{username}](https://t.me/{username})")
+                else:
+                    # Display group name
+                    group_list.append(f"{first_name} - (Private Group)")
+            except Exception as e:
+                # Log detailed error
+                print(f"Error fetching info for Group ID {chat_id}: {e}")
+                group_list.append(f"Group ID {chat_id} (Error fetching info)")
+
+        group_text = '\n\n'.join(group_list) or "No groups found."
+        await query.message.edit_text(
+            text=group_text, 
+            parse_mode=enums.ParseMode.MARKDOWN,
+            reply_markup=G_U_BTN
+        )
+
+    
+    elif data == 'HELP':
         await client.send_chat_action(
             chat_id=query.message.chat.id,
             action=enums.ChatAction.TYPING
         )
         await asyncio.sleep(.5)
         
-        await query.edit_message_text(
+        await query.message.edit_text(
             text=HELP_MSG,
             reply_markup=InlineKeyboardMarkup(HELP_BTN)
         
         )
+        
 
     elif data == 'CLOSE':
             await query.message.delete()
+
+    elif data == 'STATS_BACK':
+        await query.edit_message_text(text=f"Stats for {app.me.mention}\n🙋‍♂️ Users : {ALL_USERS}\n👥 Groups : {ALL_GROUPS}",
+                                      reply_markup=STATS_BTN)
+        
+
 
 @app.on_message(filters.command("stats") & filters.private & filters.user(OWNER_ID))
 async def stats(client, message):
     ALL_USERS = all_users()
     ALL_GROUPS = all_groups()
     
-    await message.reply_text(text=f"Stats for {app.me.mention}\n🙋‍♂️ Users : {ALL_USERS}\n👥 Groups : {ALL_GROUPS}")
+    await message.reply_text(text=f"Stats for {app.me.mention}\n🙋‍♂️ Users : {ALL_USERS}\n👥 Groups : {ALL_GROUPS}",
+                             reply_markup=STATS_BTN
+                            )
 
 
 @app.on_message(filters.command("group_bc") & filters.private & filters.user(OWNER_ID))
