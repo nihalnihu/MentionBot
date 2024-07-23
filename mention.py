@@ -539,8 +539,7 @@ async def stats(client, message):
     
     # Reply to the message with stats and buttons
     await message.reply_text(
-        text=response_text,
-        reply_markup=STATS_BTN
+        text=response_text
     )
     
 
