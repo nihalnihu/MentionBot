@@ -401,7 +401,17 @@ FSUB_BTN = [[
            
            ]
 
+@app.on_message(filters.command("start") & filters.group)
+def startt(client, gstart):
+    gstart.delete()   
+    
+@app.on_message(filters.command("stats") & filters.group)
+def startt(client, gstats):
+    gstats.delete()
 
+@app.on_message(filters.command("restart") & filters.group)
+def startt(client, grestart):
+    grestart.delete()
 
 @app.on_message(filters.command("start") & filters.private)
 async def startt(client, start):
@@ -547,12 +557,6 @@ async def broadcast_to_all_groups(client: Client, message):
                 await reply_message.edit(new_text)
         else:
             await message.reply("Use: /group_bc <message> or reply to a photo, video, or sticker")
-
-@app.on_message(filters.command("stop") & filters.user(OWNER_ID))
-def stop_bot(client, message):
-    message.reply_text("Bot is stopping...")
-    app.stop()
-
 
 
 # Start the Flask server in a separate thread
