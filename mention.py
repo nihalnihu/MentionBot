@@ -460,15 +460,17 @@ async def callback(client, query):
     data = query.data
     msg = query.message
     userr = msg.from_user
+    
     if userr:
         user_id = userr.id
         username = userr.username if userr.username else userr.first_name
         mention = f"[{username}](tg://user?id={user_id})"
+        
         if data == 'start':
             await query.edit_message_text(
                 text=START_TXT.format(mention),
                 reply_markup=InlineKeyboardMarkup(START_BTN)
-        )
+            )
         
     elif data == 'users':
         user_records = users.find({})
@@ -486,12 +488,15 @@ async def callback(client, query):
             except Exception as e:
                 print(f"Error fetching profile for User ID {user_id}: {e}")
                 user_list.append(f"User ID {user_id} (Error fetching profile)")
-                user_text = '\n\n'.join(user_list) or "No users found."
-                await query.message.edit_text(
-                    text=user_text,
-                    parse_mode=enums.ParseMode.MARKDOWN,
-                    reply_markup=G_U_BTN,
-                    disable_web_page_preview=True)
+        
+        user_text = '\n\n'.join(user_list) or "No users found."
+        await query.message.edit_text(
+            text=user_text,
+            parse_mode=enums.ParseMode.MARKDOWN,
+            reply_markup=G_U_BTN,
+            disable_web_page_preview=True
+        )
+    
     elif data == 'groups':
         group_ids = get_all_group_ids()
         group_list = []
@@ -503,35 +508,43 @@ async def callback(client, query):
                 if username:
                     group_list.append(f"[@{username}](https://t.me/{username})")
                 else:
-                        group_list.append(f"{first_name} - (Private Group)")
+                    group_list.append(f"{first_name} - (Private Group)")
             except Exception as e:
                 print(f"Error fetching info for Group ID {chat_id}: {e}")
                 group_list.append(f"Group ID {chat_id} (Error fetching info)")
-                group_text = '\n\n'.join(group_list) or "No groups found."
-                await query.message.edit_text(
-                    text=group_text, 
-                    parse_mode=enums.ParseMode.MARKDOWN,
-                    reply_markup=G_U_BTN,
-                    disable_web_page_preview=True
+        
+        group_text = '\n\n'.join(group_list) or "No groups found."
+        await query.message.edit_text(
+            text=group_text,
+            parse_mode=enums.ParseMode.MARKDOWN,
+            reply_markup=G_U_BTN,
+            disable_web_page_preview=True
         )
+    
     elif data == 'HELP':
         await query.message.edit_text(
             text=HELP_MSG,
-            reply_markup=InlineKeyboardMarkup(HELP_BTN))
-        
+            reply_markup=InlineKeyboardMarkup(HELP_BTN)
+        )
+    
     elif data == 'CLOSE':
         await query.message.delete()
+    
     elif data == 'stats':
         ALL_USERS = all_users()
         ALL_GROUPS = all_groups()
         await query.edit_message_text(
             text=f"Stats for {client.me.mention}\n🙋‍♂️ Users : {ALL_USERS}\n👥 Groups : {ALL_GROUPS}",
             reply_markup=InlineKeyboardMarkup(
-                    [[InlineKeyboardButton('User', callback_data='users'),
-                      InlineKeyboardButton('Group', callback_data='groups')]]
-            ))
+                [[InlineKeyboardButton('User', callback_data='users'),
+                  InlineKeyboardButton('Group', callback_data='groups')]]
+            )
+        )
         
-        
+
+
+
+
 
         
 @app.on_message(filters.command("stats") & filters.private & filters.user(OWNER_ID))
