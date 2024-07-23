@@ -438,14 +438,11 @@ async def startt(client, start):
 
 
 
-
-
 @app.on_callback_query()
 async def callback(client, query):
     data = query.data
 
     if data == 'users':
-        # Fetch all users from the database
         user_records = users.find({})
         user_list = []
         for user in user_records:
@@ -455,17 +452,16 @@ async def callback(client, query):
                 username = user_profile.username
                 first_name = user_profile.first_name
                 if username:
-                    user_list.append(f"[{username}](tg://user_id={user_id})")
+                    user_list.append(f"{format_bold(username)} (tg://user_id={user_id})")
                 else:
-                    user_list.append(f"[{first_name}](tg://user_id={user_id})")
+                    user_list.append(f"{format_italic(first_name)} (tg://user_id={user_id})")
             except Exception as e:
-                user_list.append(f"[User {user_id}] (Error fetching profile)")
+                user_list.append(f"User ID {user_id} (Error fetching profile)")
 
         user_text = '\n'.join(user_list) or "No users found."
         await query.message.edit_text(text=user_text)
     
     elif data == 'groups':
-        # Fetch all groups from the database
         group_ids = get_all_group_ids()
         group_list = []
         for chat_id in group_ids:
@@ -474,29 +470,14 @@ async def callback(client, query):
                 username = chat.username
                 first_name = chat.title
                 if username:
-                    group_list.append(f"[@{username}](https://t.me/{username})")
+                    group_list.append(f"@{format_bold(username)} (https://t.me/{username})")
                 else:
-                    group_list.append(f"{first_name} (private group)")
+                    group_list.append(f"{format_italic(first_name)} (private group)")
             except Exception as e:
-                group_list.append(f"[Group {chat_id}] (Error fetching info)")
+                group_list.append(f"Group ID {chat_id} (Error fetching info)")
 
         group_text = '\n'.join(group_list) or "No groups found."
         await query.message.edit_text(text=group_text)
-    
-    elif data == 'HELP':
-        await client.send_chat_action(
-            chat_id=query.message.chat.id,
-            action=enums.ChatAction.TYPING
-        )
-        await asyncio.sleep(.5)
-        await query.edit_message_text(
-            text=HELP_MSG,
-            reply_markup=InlineKeyboardMarkup(HELP_BTN)
-        )
-
-    elif data == 'CLOSE':
-        await query.message.delete()
-
 
 
 
