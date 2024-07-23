@@ -530,7 +530,7 @@ async def stats(client, message):
     ALL_GROUPS = all_groups()
     
     await message.reply_text(text=f"Stats for {app.me.mention}\n🙋‍♂️ Users : {ALL_USERS}\n👥 Groups : {ALL_GROUPS}",
-                             reply_markup=STATS_BTN
+                             reply_markup=InlineKeyboardMarkup(STATS_BTN)
                             )
 
 
