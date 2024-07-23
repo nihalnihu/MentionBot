@@ -46,15 +46,14 @@ async def update_and_restart(client, message):
     # Notify the user that the update process has started
     response = await message.reply_text("Updating and restarting the bot...")
 
-    # Call the Bash script
+     # Call the Bash script
     subprocess.Popen(["/bin/bash", "restart.sh"])
-
+    
     # Optionally, delete the initial message to clean up the chat
     await response.delete()
 
     # Notify the user that the bot is being updated
     await message.reply_text("Bot is being updated and will restart shortly.")
-
 
 
     
