@@ -451,16 +451,18 @@ async def callback(client, query):
                 username = user_profile.username
                 first_name = user_profile.first_name
                 if username:
-                    user_list.append(f"{username} (tg://user?id={user_id})")
+                    # Format link using username
+                    user_list.append(f"[{username}](https://t.me/{username})")
                 else:
+                    # Use user ID link (non-clickable outside Telegram)
                     user_list.append(f"{first_name} (tg://user?id={user_id})")
             except Exception as e:
                 # Log detailed error
                 print(f"Error fetching profile for User ID {user_id}: {e}")
                 user_list.append(f"User ID {user_id} (Error fetching profile)")
 
-        user_text = '\n\n'.join(user_list) or "No users found."
-        await query.message.edit_text(text=user_text)
+        user_text = '\n'.join(user_list) or "No users found."
+        await query.message.edit_text(text=user_text, parse_mode=enums.ParseMode.MARKDOWN)
     
     elif data == 'groups':
         group_ids = get_all_group_ids()
@@ -471,16 +473,20 @@ async def callback(client, query):
                 username = chat.username
                 first_name = chat.title
                 if username:
-                    group_list.append(f"@{username}")
+                    # Format link using username
+                    group_list.append(f"[@{username}](https://t.me/{username})")
                 else:
-                    group_list.append(f"{first_name} - (private group)")
+                    # Display group name
+                    group_list.append(f"{first_name} (private group)")
             except Exception as e:
                 # Log detailed error
                 print(f"Error fetching info for Group ID {chat_id}: {e}")
                 group_list.append(f"Group ID {chat_id} (Error fetching info)")
 
-        group_text = '\n\n'.join(group_list) or "No groups found."
-        await query.message.edit_text(text=group_text)
+        group_text = '\n'.join(group_list) or "No groups found."
+        await query.message.edit_text(text=group_text, parse_mode=enums.ParseMode.MARKDOWN)
+
+
 
 
 
