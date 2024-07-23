@@ -57,6 +57,12 @@ def all_groups():
     grps = len(list(group))
     return grps
 
+def get_all_user_ids():
+    """
+    Return a list of all user IDs.
+    """
+    return [user['user_id'] for user in users.find({})]
+    
 def get_all_group_ids():
     """
     Return a list of all group IDs.
