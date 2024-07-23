@@ -539,7 +539,7 @@ async def callback(client, query):
             ))
         
     elif data == 'start':
-        username = msg.from_user.mention
+        username = query.message.from_user.mention
         await query.edit_message_text(
             text=START_TXT.format(username),
             reply_markup=InlineKeyboardMarkup(START_BTN)
