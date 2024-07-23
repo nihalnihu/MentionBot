@@ -1,10 +1,7 @@
-
 import os
 from pyrogram import Client, enums
 
-
 FSUB_ID = os.getenv('FSUB_ID')
-
 
 async def check_subscription(app: Client, user_id: int):
     try:
@@ -13,9 +10,3 @@ async def check_subscription(app: Client, user_id: int):
     except Exception as e:
         print(f"Error checking subscription: {e}")
         return False
-
-if __name__ == "__main__":
-    import sys
-    if len(sys.argv) > 1:
-        if sys.argv[1] == 'count':
-            print("Hyhyhy")
