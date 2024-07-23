@@ -41,10 +41,17 @@ app = Client("TGBot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
 
 @app.on_message(filters.command("restart") & filters.private & filters.user(OWNER_ID))
 async def update_and_restart(client, message):
+    # Notify the user that the update process has started
+    response = await message.reply_text("Updating and restarting the bot...")
 
+     # Call the Bash script
     subprocess.Popen(["/bin/bash", "restart.sh"])
+    
+    # Optionally, delete the initial message to clean up the chat
+    await response.delete()
 
-    await message.reply_text("Started Updating...⏳ And Will Restart Shortly")
+    # Notify the user that the bot is being updated
+    await message.reply_text("Bot is being updated and will restart shortly.")
 
 
     
@@ -427,128 +434,32 @@ async def startt(client, start):
         await start.delete()
         await FS.delete()
 
-STATS_BTN = InlineKeyboardMarkup([[
-        InlineKeyboardButton("Users", callback_data="users"),
-        InlineKeyboardButton("Groups", callback_data="groups")
-]])
-G_U_BTN = InlineKeyboardMarkup(
-    [
-        [
-            InlineKeyboardButton('Back', callback_data='STATS_BACK'),
-            InlineKeyboardButton('Close', callback_data='CLOSE')
-        ]
-        
-    ]
-)
 
 @app.on_callback_query()
 async def callback(client, query):
     data = query.data
-
-    if data == 'users':
-        user_records = users.find({})
-        user_list = []
-        for user in user_records:
-            user_id = user.get('user_id')
-            try:
-                user_profile = await client.get_users(user_id)
-                username = user_profile.username
-                first_name = user_profile.first_name
-                if username:
-                    # Format link using username
-                    user_list.append(f"[{username}](https://t.me/{username})")
-                else:
-                    # Use user ID link (non-clickable outside Telegram)
-                    user_list.append(f"{first_name} (tg://user?id={user_id})")
-            except Exception as e:
-                # Log detailed error
-                print(f"Error fetching profile for User ID {user_id}: {e}")
-                user_list.append(f"User ID {user_id} (Error fetching profile)")
-
-        user_text = '\n\n'.join(user_list) or "No users found."
-        await query.message.edit_text(
-            text=user_text,
-            parse_mode=enums.ParseMode.MARKDOWN,
-            reply_markup=G_U_BTN
-        )
-    
-    elif data == 'groups':
-        group_ids = get_all_group_ids()
-        group_list = []
-        for chat_id in group_ids:
-            try:
-                chat = await client.get_chat(chat_id)
-                username = chat.username
-                first_name = chat.title
-                if username:
-                    # Format link using username
-                    group_list.append(f"[@{username}](https://t.me/{username})")
-                else:
-                    # Display group name
-                    group_list.append(f"{first_name} - (Private Group)")
-            except Exception as e:
-                # Log detailed error
-                print(f"Error fetching info for Group ID {chat_id}: {e}")
-                group_list.append(f"Group ID {chat_id} (Error fetching info)")
-
-        group_text = '\n\n'.join(group_list) or "No groups found."
-        await query.message.edit_text(
-            text=group_text, 
-            parse_mode=enums.ParseMode.MARKDOWN,
-            reply_markup=G_U_BTN
-        )
-
-    
-    elif data == 'HELP':
+    if data == 'HELP':
         await client.send_chat_action(
             chat_id=query.message.chat.id,
             action=enums.ChatAction.TYPING
         )
         await asyncio.sleep(.5)
         
-        await query.message.edit_text(
+        await query.edit_message_text(
             text=HELP_MSG,
             reply_markup=InlineKeyboardMarkup(HELP_BTN)
         
         )
-        
 
     elif data == 'CLOSE':
             await query.message.delete()
 
-    elif data == 'STATS_BACK':
-        await query.edit_message_text(text=f"Stats for {app.me.mention}\n🙋‍♂️ Users : {ALL_USERS}\n👥 Groups : {ALL_GROUPS}", reply_markup=STATS_BTN)
-
-        
-STATS_BTN = InlineKeyboardMarkup([[
-        InlineKeyboardButton("Users", callback_data="users"),
-        InlineKeyboardButton("Groups", callback_data="groups")
-]])
-
 @app.on_message(filters.command("stats") & filters.private & filters.user(OWNER_ID))
 async def stats(client, message):
-    try:
-        # Get the counts of users and groups
-        ALL_USERS = all_users()  # Ensure this function is defined and imported correctly
-        ALL_GROUPS = all_groups()  # Ensure this function is defined and imported correctly
-
-        # Prepare the response text
-        response_text = (
-            f"Stats for {app.me.mention}\n"
-            f"🙋‍♂️ Users: {ALL_USERS}\n"
-            f"👥 Groups: {ALL_GROUPS}"
-        )
-
-        # Reply to the message with stats and buttons
-        await message.reply_text(
-            text=response_text,
-            reply_markup=STATS_BTN
-        )
-    except Exception as e:
-        # Log detailed error for debugging
-        print(f"An error occurred: {e}")
-        await message.reply_text("An error occurred while fetching stats.")
+    ALL_USERS = all_users()
+    ALL_GROUPS = all_groups()
     
+    await message.reply_text(text=f"Stats for {app.me.mention}\n🙋‍♂️ Users : {ALL_USERS}\n👥 Groups : {ALL_GROUPS}")
 
 
 @app.on_message(filters.command("group_bc") & filters.private & filters.user(OWNER_ID))
