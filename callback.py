@@ -1,7 +1,7 @@
 import os
 from pyrogram import Client
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-
+from mention import app
 
 @app.on_callback_query()
 async def handle_callback_query(client, callback_query):
