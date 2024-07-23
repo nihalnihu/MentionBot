@@ -57,23 +57,14 @@ async def is_user_admin(chat_id, user_id):
 async def mention(client, message):
     user = message.from_user
     chat = message.chat
-    mention = message.from_user.mention
+    mention = user.mention
     if not already_db(user.id):
         await message.reply_text(
             text=f"Hey {mention}❗ First Start Me In PM"
         )
         return
     add_group(chat.id)
-
-    try:
-        title = chat.title
-        username = chat.username if chat.username else "None"
-        add_group(chat.id, title, username)
-    except (UserIsBlocked, PeerIdInvalid):
-        pass
-    except Exception as err:
-        print(str(err))
-
+    
     
     logger.info(f"Chat ID: {chat.id}, User ID: {user.id}")
 
@@ -423,11 +414,9 @@ async def callback(client, query):
 @app.on_message(filters.command("stats") & filters.private & filters.user(OWNER_ID))
 async def stats(client, message):
     ALL_USERS = all_users()
-    groups_info = all_groups()
+    ALL_GROUPS = all_groups()
     
-    groups_info_str = "\n".join(groups_info) if groups_info else "No groups found."
-    
-    await message.reply_text(text=f"Stats for {app.me.mention}\n🙋‍♂️ Users : {ALL_USERS}\n👥 Groups : {len(groups_info)}\n\nAll Groups info:\n{groups_info_str}")
+    await message.reply_text(text=f"Stats for {app.me.mention}\n🙋‍♂️ Users : {ALL_USERS}\n👥 Groups : {ALL_GROUPS}")
 
 
 @app.on_message(filters.command("group_bc") & filters.private & filters.user(OWNER_ID))
