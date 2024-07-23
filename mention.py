@@ -53,30 +53,28 @@ async def is_user_admin(chat_id, user_id):
         logger.error(f"Error fetching chat member status for user_id {user_id}: {e}")
         return False
 
+
+
+
 @app.on_message(filters.command("mention") & filters.group)
 async def mention(client, message):
     user = message.from_user
     chat = message.chat
     mention = message.from_user.mention
+
+    # Check if the user is in the database
     if not already_db(user.id):
-        await message.reply_text(
-            text=f"Hey {mention}❗ First Start Me In PM"
-        )
+        await message.reply_text(text=f"Hey {mention}❗ First Start Me In PM")
         return
-    add_group(chat.id)
 
-    try:
-        title = chat.title
-        username = chat.username if chat.username else "None"
-        add_group(chat.id, title, username)
-    except (UserIsBlocked, PeerIdInvalid):
-        pass
-    except Exception as err:
-        print(str(err))
+    # Add or update the group information in the database
+    title = chat.title if chat.title else "Unknown"
+    username = chat.username if chat.username else "None"
+    add_group(chat.id, title, username)
 
-    
     logger.info(f"Chat ID: {chat.id}, User ID: {user.id}")
 
+    # Check if the user is an admin
     is_admin = await is_user_admin(chat.id, user.id)
     logger.info(f"User admin status: {is_admin}")
 
@@ -84,29 +82,28 @@ async def mention(client, message):
         await message.delete()
         return
 
+    # Mention all members in the group
     command_parts = message.text.split(maxsplit=1)
     mentions = []
 
-    async for member in app.get_chat_members(chat.id):
+    async for member in client.get_chat_members(chat.id):
         if not member.user.is_bot:
             if member.user.username:
                 mentions.append(f"@{member.user.username}")
             else:
                 mentions.append(f"[{member.user.first_name}](tg://user?id={member.user.id})")
 
-    if len(command_parts) > 1:
-        custom_message = command_parts[1]
-        mention_chunks = [", ".join(mentions[i:i + 5]) for i in range(0, len(mentions), 5)]
-        for chunk in mention_chunks:
-            full_message = f"{custom_message}\n\n{chunk}"
-            await message.reply(full_message)
-            await asyncio.sleep(2)
-    else:
-        mention_chunks = [", ".join(mentions[i:i + 5]) for i in range(0, len(mentions), 5)]
-        for chunk in mention_chunks:
-            full_message = chunk
-            await message.reply(full_message)
-            await asyncio.sleep(1)
+    mention_chunks = [", ".join(mentions[i:i + 5]) for i in range(0, len(mentions), 5)]
+    custom_message = command_parts[1] if len(command_parts) > 1 else ""
+    
+    for chunk in mention_chunks:
+        full_message = f"{custom_message}\n\n{chunk}" if custom_message else chunk
+        await message.reply(full_message)
+        await asyncio.sleep(2)
+
+
+
+
 
 
 
@@ -420,14 +417,22 @@ async def callback(client, query):
     elif data == 'CLOSE':
             await query.message.delete()
 
+
+
+
 @app.on_message(filters.command("stats") & filters.private & filters.user(OWNER_ID))
 async def stats(client, message):
     ALL_USERS = all_users()
     groups_info = all_groups()
-    
+
     groups_info_str = "\n".join(groups_info) if groups_info else "No groups found."
-    
-    await message.reply_text(text=f"Stats for {app.me.mention}\n🙋‍♂️ Users : {ALL_USERS}\n👥 Groups : {len(groups_info)}\n\nAll Groups info:\n{groups_info_str}")
+
+    # Using 'client' instead of 'app' here
+    await message.reply_text(
+        text=f"Stats for {client.me.mention}\n🙋‍♂️ Users : {ALL_USERS}\n👥 Groups : {len(groups_info)}\n\nAll Groups info:\n{groups_info_str}"
+    )
+
+
 
 
 @app.on_message(filters.command("group_bc") & filters.private & filters.user(OWNER_ID))
