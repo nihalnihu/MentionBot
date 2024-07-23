@@ -400,11 +400,8 @@ FSUB_BTN = [[
            ]
 
 STATS_BTN = [
-    [
-    InlineKeyboardButton('User', callback_data='users')
-],[
-    InlineKeyboardButton('Group', callback_data='groups')
-    ]
+    [InlineKeyboardButton('User', callback_data='users')],
+    [InlineKeyboardButton('Group', callback_data='groups')]
 ]
              
 
