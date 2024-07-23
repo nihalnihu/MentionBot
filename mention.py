@@ -391,9 +391,10 @@ async def startt(client, start):
     user_id = start.from_user.id
     username = start.from_user.mention
     is_subscribed = await check_subscription(client, user_id)
+    print(f"User subscribed: {is_subscribed}")
 
     if is_subscribed:
-        add_user(start.from_user.id)
+        add_user(user_id)
         await start.reply_text(
             text=START_TXT.format(username),
             reply_markup=InlineKeyboardMarkup(START_BTN)
@@ -405,6 +406,7 @@ async def startt(client, start):
             reply_markup=InlineKeyboardMarkup(FSUB_BTN)
                                      )
         await asyncio.sleep(60)
+        await start.delete()
         await FS.delete()
 
 
