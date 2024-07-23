@@ -460,7 +460,7 @@ async def callback(client, query):
     data = query.data
     msg = query.message
     user_id = msg.from_user.id
-    username = msg.from_user.usernane
+    username = msg.from_user.username
     mention = f"[{username}](tg://user?id={user_id})"
     if data == 'start':
         await query.edit_message_text(
