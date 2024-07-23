@@ -4,7 +4,6 @@ import logging
 import stats
 import os
 import threading
-from pyrogram.errors.exceptions.flood_420 import FloodWait
 import subprocess
 from flask import Flask
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup, CallbackQuery
@@ -75,16 +74,11 @@ PM_START = InlineKeyboardMarkup(
     ]]
 )
 
-
-
-
-
 @app.on_message(filters.command("mention") & filters.group)
 async def mention(client, message):
     user = message.from_user
     chat = message.chat
     mention = user.mention
-
     if not already_db(user.id):
         GOM_PM = await message.reply_text(
             text=f"Hey {mention}❗ First Start Me In PM",
@@ -95,8 +89,9 @@ async def mention(client, message):
         await GOM_PM.delete()
         await message.delete()
         return
-    
+        
     add_group(chat.id)
+    
     
     logger.info(f"Chat ID: {chat.id}, User ID: {user.id}")
 
@@ -117,30 +112,19 @@ async def mention(client, message):
             else:
                 mentions.append(f"[{member.user.first_name}](tg://user?id={member.user.id})")
 
-    mention_chunks = [", ".join(mentions[i:i + 10]) for i in range(0, len(mentions), 10)]
-    delay_between_messages = 2  # Delay between each message
-    delay_between_chunks = 30  # Delay between each chunk to manage rate limits
-
-    async def send_mentions(chunk):
-        nonlocal delay_between_messages
-        while True:
-            try:
-                full_message = f"{custom_message}\n\n{chunk}" if command_parts[1:] else chunk
-                await message.reply(full_message, disable_web_page_preview=True)
-                await asyncio.sleep(delay_between_messages)
-                break
-            except FloodWait as e:
-                print(f"Rate limit exceeded. Waiting for {e.x} seconds.")
-                await asyncio.sleep(e.x)
-                delay_between_messages = min(delay_between_messages * 2, 60)  # Exponential backoff
-
-    for chunk in mention_chunks:
-        await send_mentions(chunk)
-        await asyncio.sleep(delay_between_chunks)
-
-
-
-
+    if len(command_parts) > 1:
+        custom_message = command_parts[1]
+        mention_chunks = [", ".join(mentions[i:i + 5]) for i in range(0, len(mentions), 5)]
+        for chunk in mention_chunks:
+            full_message = f"{custom_message}\n\n{chunk}"
+            await message.reply(full_message)
+            await asyncio.sleep(2)
+    else:
+        mention_chunks = [", ".join(mentions[i:i + 5]) for i in range(0, len(mentions), 5)]
+        for chunk in mention_chunks:
+            full_message = chunk
+            await message.reply(full_message, disable_web_page_preview=True)
+            await asyncio.sleep(1)
 
 
 
