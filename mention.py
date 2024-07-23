@@ -523,7 +523,10 @@ async def callback(client, query):
         )
 
         
-
+STATS_BTN = InlineKeyboardMarkup([[
+        InlineKeyboardButton("Users", callback_data="users"),
+        InlineKeyboardButton("Groups", callback_data="groups")
+]])
 
 @app.on_message(filters.command("stats") & filters.private & filters.user(OWNER_ID))
 async def stats(client, message):
