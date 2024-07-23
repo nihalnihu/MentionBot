@@ -1,3 +1,6 @@
+import os
+from pyrogram import Client
+from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 
 @app.on_callback_query()
