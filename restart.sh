@@ -15,10 +15,10 @@ git pull origin "$BRANCH_NAME" || { echo "Failed to pull latest changes"; exit 1
 
 # Restart the bot
 # Replace 'your_bot_script.py' with the actual script name and adjust the command if needed
-pkill -f 'python your_bot_script.py'  # Kill the existing bot process
-python your_bot_script.py &           # Start the bot again in the background
+pkill -f 'mention.py'  # Kill the existing bot process
+python mention.py &           # Start the bot again in the background
 
 # Notify after the bot has restarted
 # Replace the following line with your notification method
 # For example, sending a notification to a specific chat via a bot
-curl -X POST "https://api.telegram.org/botYOUR_BOT_TOKEN/sendMessage" -d "chat_id=YOUR_CHAT_ID" -d "text=The bot has been successfully updated and restarted."
+curl -X POST "https://api.telegram.org/bot7431802835:AAF2Imho1M6AnmBpj9fXZlukVMBt_y_fOes/sendMessage" -d "chat_id=7220858548" -d "text=The bot has been successfully updated and restarted."
