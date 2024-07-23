@@ -517,10 +517,7 @@ async def callback(client, query):
             await query.message.delete()
 
     elif data == 'STATS_BACK':
-        await query.message.edit_text(
-            text=f"Stats for {app.me.mention}\n🙋‍♂️ Users : {ALL_USERS}\n👥 Groups : {ALL_GROUPS}",
-            reply_markup=STATS_BTN
-        )
+        await query.edit_message_text(text=f"Stats for {app.me.mention}\n🙋‍♂️ Users : {ALL_USERS}\n👥 Groups : {ALL_GROUPS}", reply_markup=STATS_BTN)
 
         
 STATS_BTN = InlineKeyboardMarkup([[
