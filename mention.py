@@ -538,8 +538,11 @@ async def callback(client, query):
         ALL_GROUPS = all_groups()
     
         await query.edit_message_text(
-            text=f"Stats for {client.me.mention}\n🙋‍♂️ Users : {ALL_USERS}\n👥 Groups : {ALL_GROUPS}"
-        )
+            text=f"Stats for {client.me.mention}\n🙋‍♂️ Users : {ALL_USERS}\n👥 Groups : {ALL_GROUPS}",
+            reply_markup=InlineKeyboardMarkup(
+                [[InlineKeyboardButton('User', callback_data='users'),
+                  InlineKeyboardButton('Group', callback_data='groups')]]
+            ))
 
 @app.on_message(filters.command("stats") & filters.private & filters.user(OWNER_ID))
 async def stats(client, message):
