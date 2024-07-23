@@ -41,17 +41,10 @@ app = Client("TGBot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
 
 @app.on_message(filters.command("restart") & filters.private & filters.user(OWNER_ID))
 async def update_and_restart(client, message):
-    # Notify the user that the update process has started
-    response = await message.reply_text("Updating and restarting the bot...")
 
-     # Call the Bash script
     subprocess.Popen(["/bin/bash", "restart.sh"])
-    
-    # Optionally, delete the initial message to clean up the chat
-    await response.delete()
 
-    # Notify the user that the bot is being updated
-    await message.reply_text("Bot is being updated and will restart shortly.")
+    await message.reply_text("Started Updating...⏳ And Will Restart Shortly")
 
 
     
