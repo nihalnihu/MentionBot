@@ -458,13 +458,15 @@ async def startt(client, start):
 @app.on_callback_query()
 async def callback(client, query):
     data = query.data
-    msg = query.message
-    user_id = msg.from_user.id
-    username = msg.from_user.username
-    mention = f"[{username}](tg://user?id={user_id})"
+    
     if data == 'start':
         await query.edit_message_text(
-            text=START_TXT.format(mention),
+            text="""
+            ʜᴇʏ ʙᴜᴅᴅʏ, ʟᴇᴛs ɢᴏ!!🤩
+            
+            ᴀᴅᴅ ᴍᴇ ᴛᴏ ʏᴏᴜʀ ɢʀᴏᴜᴘ ᴛʜᴇɴ ᴍᴇɴᴛɪᴏɴ ᴀʟʟ ᴍᴇᴍʙᴇʀs.
+            ᴏʀ ʙʀᴏᴀᴅᴄᴀsᴛ ᴀ ᴍᴇssᴀɢᴇ ᴛᴏ ᴀʟʟ ɢʀᴏᴜᴘ ᴍᴇᴍʙᴇʀs ɪɴ ᴘʀɪᴠᴀᴛᴇ. 😎
+            """,
             reply_markup=InlineKeyboardMarkup(START_BTN)
             )
         
