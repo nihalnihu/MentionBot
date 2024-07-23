@@ -3,8 +3,21 @@
 # Specify the branch name
 BRANCH_NAME="main"
 
+# Specify the directory to clone into
+REPO_DIR="MentionBot"
+
+# Check if the repository directory exists and delete it
+if [ -d "$REPO_DIR" ]; then
+    echo "Repository directory found. Deleting..."
+    rm -rf "$REPO_DIR" || { echo "Failed to delete existing repository directory"; exit 1; }
+fi
+
+# Clone the repository
+echo "Cloning repository..."
+git clone https://github.com/nihalnihu/MentionBot.git "$REPO_DIR" || { echo "Failed to clone repository"; exit 1; }
+
 # Navigate to the directory containing the Git repository
-cd https://github.com/nihalnihu/MentionBot || { echo "Repository not found!"; exit 1; }
+cd "$REPO_DIR" || { echo "Failed to navigate to repository directory"; exit 1; }
 
 # Checkout the specified branch
 git checkout "$BRANCH_NAME" || { echo "Failed to checkout branch $BRANCH_NAME"; exit 1; }
