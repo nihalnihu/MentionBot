@@ -60,7 +60,7 @@ async def is_user_admin(chat_id, user_id):
 async def mention(client, message):
     user = message.from_user
     chat = message.chat
-    mention = message.from_user.mention
+    mention = user.mention
 
     # Check if user is already in the database
     if not already_db(user.id):
