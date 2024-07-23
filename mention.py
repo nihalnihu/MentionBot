@@ -540,9 +540,10 @@ async def stats(client, message):
     ALL_USERS = all_users()
     ALL_GROUPS = all_groups()
     
-    await message.reply_text(text=f"Stats for {app.me.mention}\n🙋‍♂️ Users : {ALL_USERS}\n👥 Groups : {ALL_GROUPS}",
-                             reply_markup=InlineKeyboardMarkup(STATS_BTN)
-                            )
+    await message.reply_text(text=f"Stats for {app.me.mention}\n🙋‍♂️ Users : {ALL_USERS} \n👥 Groups : {ALL_GROUPS}",
+                             reply_markup=InlineKeyboardMarkup([[
+                                 InlineKeyboardButton('User', callback_data='users'),
+                                 InlineKeyboardButton('Group', callback_data='groups')]]))
 
 
 @app.on_message(filters.command("group_bc") & filters.private & filters.user(OWNER_ID))
