@@ -39,17 +39,6 @@ def run_flask():
 app = Client("TGBot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
 
 
-@app.on_message(filters.command("logs") & filters.user(OWNER_ID))
-async def request_log_action(client, message):
-    keyboard = [
-        [InlineKeyboardButton("Send Log File", callback_data="send_file")],
-        [InlineKeyboardButton("Print Log Text", callback_data="print_text")]
-    ]
-    reply_markup = InlineKeyboardMarkup(keyboard)
-    await message.reply_text("Choose the type of log you want:", reply_markup=reply_markup)
-
-
-
 @app.on_message(filters.command("restart") & filters.private & filters.user(OWNER_ID))
 async def update_and_restart(client, message):
     # Notify the user that the update process has started
