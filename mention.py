@@ -55,15 +55,15 @@ async def is_user_admin(chat_id, user_id):
 
 @app.on_message(filters.command("mention") & filters.group)
 async def mention(client, message):
-    user_id = message.from_user.id
+    user = message.from_user
     chat = message.chat
     mention = message.from_user.mention
-    if not already_db(user_id):
+    if not already_db(user.id):
         await message.reply_text(
             text=f"Hey {mention}❗ First Start Me In PM"
         )
         return
-    add_group(chat_id)
+    add_group(chat.id)
 
     try:
         title = chat.title
@@ -75,9 +75,9 @@ async def mention(client, message):
         print(str(err))
 
     
-    logger.info(f"Chat ID: {chat_id}, User ID: {user_id}")
+    logger.info(f"Chat ID: {chat.id}, User ID: {user.id}")
 
-    is_admin = await is_user_admin(chat_id, user_id)
+    is_admin = await is_user_admin(chat.id, user.id)
     logger.info(f"User admin status: {is_admin}")
 
     if not is_admin:
@@ -87,7 +87,7 @@ async def mention(client, message):
     command_parts = message.text.split(maxsplit=1)
     mentions = []
 
-    async for member in app.get_chat_members(chat_id):
+    async for member in app.get_chat_members(chat.id):
         if not member.user.is_bot:
             if member.user.username:
                 mentions.append(f"@{member.user.username}")
