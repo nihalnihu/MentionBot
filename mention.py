@@ -46,7 +46,7 @@ def update_and_restart(client, message):
     RE = message.reply_text("Updating...")
     subprocess.Popen(["python3", "restart.py"])
     RE.delete()
-    message.reply_text(Bot Updated!)
+    message.reply_text('Bot Updated!')
 
 
     
