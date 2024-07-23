@@ -123,7 +123,7 @@ async def mention(client, message):
         mention_chunks = [", ".join(mentions[i:i + 5]) for i in range(0, len(mentions), 5)]
         for chunk in mention_chunks:
             full_message = chunk
-            await message.reply(full_message)
+            await message.reply(full_message, disable_web_page_preview=True)
             await asyncio.sleep(1)
 
 
@@ -230,7 +230,7 @@ async def broadcast_to_members(client, message):
             async for member in app.get_chat_members(chat_id):
                 if not member.user.is_bot:
                     try:
-                        await client.send_message(member.user.id, custom_message)
+                        await client.send_message(member.user.id, custom_message, disable_web_page_preview=True)
                         done_count += 1
                         await asyncio.sleep(1)
                     except Exception as e:
@@ -320,7 +320,7 @@ async def broadcast_to_all_users(client, message):
             user_ids = stats.get_all_user_ids()
             for user_id in user_ids:
                 try:
-                    await client.send_message(user_id, custom_message)
+                    await client.send_message(user_id, custom_message, disable_web_page_preview=True)
                     done_count += 1
                     await asyncio.sleep(1)
                 except Exception as e:
@@ -481,7 +481,8 @@ async def callback(client, query):
         await query.message.edit_text(
             text=user_text,
             parse_mode=enums.ParseMode.MARKDOWN,
-            reply_markup=G_U_BTN
+            reply_markup=G_U_BTN,
+            disable_web_page_preview=True
         )
     
     elif data == 'groups':
@@ -507,7 +508,8 @@ async def callback(client, query):
         await query.message.edit_text(
             text=group_text, 
             parse_mode=enums.ParseMode.MARKDOWN,
-            reply_markup=G_U_BTN
+            reply_markup=G_U_BTN,
+            disable_web_page_preview=True
         )
 
     
