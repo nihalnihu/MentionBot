@@ -59,13 +59,18 @@ def all_users():
 
 def all_groups():
     """
-    Return a list of all groups with their title and username.
+    Return a list of all groups with their title and username, excluding 'Unknown - @None'.
     """
     group_cursor = groups.find({})
     group_info = []
     for group in group_cursor:
         title = group.get("title", "Unknown")
         username = group.get("username", "None")
+        
+        # Skip entries with 'Unknown - @None'
+        if title == "Unknown" and username == "None":
+            continue
+        
         group_info.append(f"{title} - @{username}")
     return group_info
 
