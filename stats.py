@@ -1,7 +1,7 @@
 import os
 from pyrogram import Client, enums
 
-FSUB_ID = os.getenv('FSUB_ID')
+FSUB_ID = os.getenv('FSUB_ID', 'TG_BotCreator')
 
 async def check_subscription(app: Client, user_id: int):
     try:
