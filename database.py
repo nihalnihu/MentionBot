@@ -39,17 +39,12 @@ def remove_user(user_id):
     if already_db(user_id):
         return users.delete_one({"user_id": str(user_id)})
 
-def add_group(chat_id, title=None, username=None):
-    """
-    Add a new group to the database with optional title and username.
-    """
-    if not already_dbg(chat_id):
-        group_data = {"chat_id": str(chat_id)}
-        if title:
-            group_data["title"] = title
-        if username:
-            group_data["username"] = username
-        return groups.insert_one(group_data)
+def add_group(chat_id):
+    in_db = already_dbg(chat_id)
+    if in_db:
+        return
+    return groups.insert_one({"chat_id": str(chat_id)})
+
 
 def all_users():
     """
@@ -58,21 +53,9 @@ def all_users():
     return users.count_documents({})
 
 def all_groups():
-    """
-    Return a list of all groups with their title and username, excluding 'Unknown - @None'.
-    """
-    group_cursor = groups.find({})
-    group_info = []
-    for group in group_cursor:
-        title = group.get("title", "Unknown")
-        username = group.get("username", "None")
-        
-        # Skip entries with 'Unknown - @None'
-        if title == "Unknown" and username == "None":
-            continue
-        
-        group_info.append(f"{title} - @{username}")
-    return group_info
+    group = groups.find({})
+    grps = len(list(group))
+    return grps
 
 def get_all_group_ids():
     """
