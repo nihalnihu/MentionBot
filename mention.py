@@ -14,7 +14,7 @@ from database import add_user, add_group, all_users, all_groups, users, remove_u
 API_ID = os.getenv('API_ID')
 API_HASH = os.getenv('API_HASH')
 BOT_TOKEN = os.getenv('BOT_TOKEN')
-OWNER_ID = int(os.getenv('OWNER_ID', 0))
+OWNER_ID = int(os.getenv('OWNER_ID'))
 
 # Initialize Logging
 logging.basicConfig(level=logging.INFO)
