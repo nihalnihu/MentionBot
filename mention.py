@@ -4,6 +4,7 @@ import logging
 import stats
 import os
 import threading
+import callback
 import subprocess
 from flask import Flask
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup, CallbackQuery
@@ -38,6 +39,15 @@ def run_flask():
 # Initialize Pyrogram Client
 app = Client("TGBot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
 
+
+@app.on_message(filters.command("logs") & filters.user(OWNER_ID))
+async def request_log_action(client, message):
+    keyboard = [
+        [InlineKeyboardButton("Send Log File", callback_data="send_file")],
+        [InlineKeyboardButton("Print Log Text", callback_data="print_text")]
+    ]
+    reply_markup = InlineKeyboardMarkup(keyboard)
+    await message.reply_text("Choose the type of log you want:", reply_markup=reply_markup)
 
 
 
