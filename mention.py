@@ -459,6 +459,7 @@ async def startt(client, start):
 async def callback(client, query):
     data = query.data
     msg = query.message
+    userr = msg.from_user
 
     if data == 'users':
         user_records = users.find({})
@@ -537,11 +538,15 @@ async def callback(client, query):
                 [[InlineKeyboardButton('User', callback_data='users'),
                   InlineKeyboardButton('Group', callback_data='groups')]]
             ))
+
+    elif userr:
+            user_id = userr.id
+            username = userr.username if userr.username else userr.first_name
+            mention = f"[{username}](tg://user?id={user_id})"
         
-    elif data == 'start':
-        username = query.message.from_user.mention
-        await query.edit_message_text(
-            text=START_TXT.format(username),
+        if data == 'start':
+            await query.edit_message_text(
+            text=START_TXT.format(mention),
             reply_markup=InlineKeyboardMarkup(START_BTN)
         )
         
