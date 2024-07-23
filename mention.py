@@ -459,17 +459,13 @@ async def startt(client, start):
 async def callback(client, query):
     data = query.data
     msg = query.message
-    userr = msg.from_user
-    
-    if userr:
-        user_id = userr.id
-        username = userr.username if userr.username else userr.first_name
-        mention = f"[{username}](tg://user?id={user_id})"
-        
-        if data == 'start':
-            await query.edit_message_text(
-                text=START_TXT.format(mention),
-                reply_markup=InlineKeyboardMarkup(START_BTN)
+    user_id = msg.from_user.id
+    username = msg.from_user.usernane
+    mention = f"[{username}](tg://user?id={user_id})"
+    if data == 'start':
+        await query.edit_message_text(
+            text=START_TXT.format(mention),
+            reply_markup=InlineKeyboardMarkup(START_BTN)
             )
         
     elif data == 'users':
