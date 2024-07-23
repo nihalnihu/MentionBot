@@ -434,8 +434,19 @@ async def startt(client, start):
         await start.delete()
         await FS.delete()
 
-
-
+STATS_BTN = InlineKeyboardMarkup([
+        [InlineKeyboardButton("Users", callback_data="users")],
+        [InlineKeyboardButton("Groups", callback_data="groups")]
+    ])
+G_U_BTN = InlineKeyboardMarkup(
+    [
+        [
+            InlineKeyboardButton('Back', callback_data='STATS_BACK')
+            InlineKeyboardButton('Close', callback_data='CLOSE')
+        ]
+        
+    ]
+)
 
 @app.on_callback_query()
 async def callback(client, query):
@@ -461,8 +472,12 @@ async def callback(client, query):
                 print(f"Error fetching profile for User ID {user_id}: {e}")
                 user_list.append(f"User ID {user_id} (Error fetching profile)")
 
-        user_text = '\n'.join(user_list) or "No users found."
-        await query.message.edit_text(text=user_text, parse_mode=enums.ParseMode.MARKDOWN)
+        user_text = '\n\n'.join(user_list) or "No users found."
+        await query.message.edit_text(
+            text=user_text,
+            parse_mode=enums.ParseMode.MARKDOWN,
+            reply_markup=G_U_BTN
+        )
     
     elif data == 'groups':
         group_ids = get_all_group_ids()
@@ -477,34 +492,53 @@ async def callback(client, query):
                     group_list.append(f"[@{username}](https://t.me/{username})")
                 else:
                     # Display group name
-                    group_list.append(f"{first_name} (private group)")
+                    group_list.append(f"{first_name} - (Private Group)")
             except Exception as e:
                 # Log detailed error
                 print(f"Error fetching info for Group ID {chat_id}: {e}")
                 group_list.append(f"Group ID {chat_id} (Error fetching info)")
 
-        group_text = '\n'.join(group_list) or "No groups found."
-        await query.message.edit_text(text=group_text, parse_mode=enums.ParseMode.MARKDOWN)
+        group_text = '\n\n'.join(group_list) or "No groups found."
+        await query.message.edit_text(
+            text=group_text, 
+            parse_mode=enums.ParseMode.MARKDOWN,
+            reply_markup=G_U_BTN
+        )
 
+    
+    elif data == 'HELP':
+        await client.send_chat_action(
+            chat_id=query.message.chat.id,
+            action=enums.ChatAction.TYPING
+        )
+        await asyncio.sleep(.5)
+        
+        await query.message.edit_text(
+            text=HELP_MSG,
+            reply_markup=InlineKeyboardMarkup(HELP_BTN)
+        
+        )
+        
 
+    elif data == 'CLOSE':
+            await query.message.delete()
 
+    elif data == 'STATS_BACK':
+        await query.message.edit_text(
+            text=f"Stats for {app.me.mention}\n🙋‍♂️ Users : {ALL_USERS}\n👥 Groups : {ALL_GROUPS}",
+            reply_markup=STATS_BTN
+        )
 
-
-
+        
 
 @app.on_message(filters.command("stats") & filters.private & filters.user(OWNER_ID))
 async def stats(client, message):
     ALL_USERS = all_users()
     ALL_GROUPS = all_groups()
     
-    keyboard = InlineKeyboardMarkup([
-        [InlineKeyboardButton("Users", callback_data="users")],
-        [InlineKeyboardButton("Groups", callback_data="groups")]
-    ])
-    
     await message.reply_text(
         text=f"Stats for {app.me.mention}\n🙋‍♂️ Users : {ALL_USERS}\n👥 Groups : {ALL_GROUPS}",
-        reply_markup=keyboard
+        reply_markup=STATS_BTN
     )
 
 
