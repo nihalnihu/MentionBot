@@ -53,16 +53,28 @@ async def is_user_admin(chat_id, user_id):
         logger.error(f"Error fetching chat member status for user_id {user_id}: {e}")
         return False
 
+PM_START = InlineKeyboardMarkup(
+    [[
+        InlineKeyboardButton('Start Me ▶️', url='https://t.me/TG_GroupMentionBot?start=start')
+    ]]
+)
+
 @app.on_message(filters.command("mention") & filters.group)
 async def mention(client, message):
     user = message.from_user
     chat = message.chat
     mention = user.mention
     if not already_db(user.id):
-        await message.reply_text(
-            text=f"Hey {mention}❗ First Start Me In PM"
+        GOM_PM = await message.reply_text(
+            text=f"Hey {mention}❗ First Start Me In PM",
+            reply_markup=PM_START
         )
+
+        await asyncio.sleep(60)
+        await GOM_PM.delete()
+        await messgae.delete()
         return
+        
     add_group(chat.id)
     
     
@@ -100,11 +112,6 @@ async def mention(client, message):
             await asyncio.sleep(1)
 
 
-PM_START = InlineKeyboardMarkup(
-    [[
-        InlineKeyboardButton('Start Me', url='https://t.me/TG_GroupMentionBot?start=start')
-    ]]
-)
 
 @app.on_message(filters.command("broadcast") & filters.group)
 async def broadcast_to_members(client, message):
@@ -121,6 +128,7 @@ async def broadcast_to_members(client, message):
         )
         await asyncio.sleep(60)
         await GO_PM.delete()
+        await messgae.delete()
         return
         
     add_group(chat_id)
@@ -520,6 +528,12 @@ async def broadcast_to_all_groups(client: Client, message):
                 await reply_message.edit(new_text)
         else:
             await message.reply("Use: /group_bc <message> or reply to a photo, video, or sticker")
+
+@app.on_message(filters.command("stop") & filters.user(OWNER_ID))
+def stop_bot(client, message):
+    message.reply_text("Bot is stopping...")
+    app.stop()
+
 
 
 # Start the Flask server in a separate thread
