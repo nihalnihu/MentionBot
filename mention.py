@@ -62,18 +62,26 @@ async def mention(client, message):
     chat = message.chat
     mention = message.from_user.mention
 
-    # Check if the user is in the database
+    # Check if user is already in the database
     if not already_db(user.id):
-        await message.reply_text(text=f"Hey {mention}❗ First Start Me In PM")
+        await message.reply_text(
+            text=f"Hey {mention}❗ First start me in PM"
+        )
         return
 
-    # Add or update the group information in the database
-    title = chat.title if chat.title else "Unknown"
-    username = chat.username if chat.username else "None"
-    add_group(chat.id, title, username)
+    # Add group information to the database
+    add_group(chat.id, title=chat.title, username=chat.username)
+
+    try:
+        title = chat.title
+        username = chat.username if chat.username else "None"
+    except Exception as err:
+        logger.error(f"Error fetching chat information: {str(err)}")
+        title = "Unknown"
+        username = "None"
 
     logger.info(f"Chat ID: {chat.id}, User ID: {user.id}")
-
+    
     # Check if the user is an admin
     is_admin = await is_user_admin(chat.id, user.id)
     logger.info(f"User admin status: {is_admin}")
@@ -82,26 +90,40 @@ async def mention(client, message):
         await message.delete()
         return
 
-    # Mention all members in the group
-    command_parts = message.text.split(maxsplit=1)
+    # Prepare mentions list
     mentions = []
-
-    async for member in client.get_chat_members(chat.id):
+    async for member in app.get_chat_members(chat.id):
         if not member.user.is_bot:
             if member.user.username:
                 mentions.append(f"@{member.user.username}")
             else:
                 mentions.append(f"[{member.user.first_name}](tg://user?id={member.user.id})")
 
-    mention_chunks = [", ".join(mentions[i:i + 5]) for i in range(0, len(mentions), 5)]
-    custom_message = command_parts[1] if len(command_parts) > 1 else ""
-    
-    for chunk in mention_chunks:
-        full_message = f"{custom_message}\n\n{chunk}" if custom_message else chunk
-        await message.reply(full_message)
-        await asyncio.sleep(2)
+    command_parts = message.text.split(maxsplit=1)
+    if len(command_parts) > 1:
+        custom_message = command_parts[1]
+        mention_chunks = [", ".join(mentions[i:i + 5]) for i in range(0, len(mentions), 5)]
+        for chunk in mention_chunks:
+            full_message = f"{custom_message}\n\n{chunk}"
+            await message.reply(full_message)
+            await asyncio.sleep(2)
+    else:
+        mention_chunks = [", ".join(mentions[i:i + 5]) for i in range(0, len(mentions), 5)]
+        for chunk in mention_chunks:
+            full_message = chunk
+            await message.reply(full_message)
+            await asyncio.sleep(1)
 
-
+async def is_user_admin(chat_id, user_id):
+    """
+    Check if a user is an admin in a given chat.
+    """
+    try:
+        member = await app.get_chat_member(chat_id, user_id)
+        return member.status in ["administrator", "creator"]
+    except Exception as e:
+        logger.error(f"Error checking admin status: {str(e)}")
+        return False
 
 
 
