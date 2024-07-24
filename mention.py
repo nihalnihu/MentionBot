@@ -43,31 +43,37 @@ app = Client("TGBot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
 
 
 
-@app.on_message(filters.command("mention") & filters.group) 
-async def mention(client, message): 
+
+@app.on_message(filters.command("mention") & filters.group)
+async def mention(client, message):
     user = message.from_user
-    chat = message.chat 
-    mention = user.mention 
-    if not already_db(user.id): 
+    chat = message.chat
+    mention = user.mention
+
+    if not already_db(user.id):
         GOM_PM = await message.reply_text(
             text=f"Hey {mention}❗ First Start Me In PM", 
-            reply_markup=PM_START)
-        
+            reply_markup=PM_START
+        )
         await asyncio.sleep(60)
         await GOM_PM.delete()
         await message.delete()
         return
-        
+
     add_group(chat.id)
     logger.info(f"Chat ID: {chat.id}, User ID: {user.id}")
+
     is_admin = await is_user_admin(chat.id, user.id)
     logger.info(f"User admin status: {is_admin}")
+
     if not is_admin:
         await message.delete()
         return
-        command_parts = message.text.split(maxsplit=1)
-        mentions = []
-        
+
+    command_parts = message.text.split(maxsplit=1)
+    mentions = []
+
+    try:
         async for member in app.get_chat_members(chat.id):
             if not member.user.is_bot:
                 if member.user.username:
@@ -75,19 +81,22 @@ async def mention(client, message):
                 else:
                     mentions.append(f"[{member.user.first_name}](tg://user?id={member.user.id})")
 
-if len(command_parts) > 1:
-    custom_message = command_parts[1]
-    mention_chunks = [", ".join(mentions[i:i + 10]) for i in range(0, len(mentions), 10)]
-    for chunk in mention_chunks:
-        full_message = f"{custom_message}\n\n{chunk}"
-        await message.reply(full_message, parse_mode=enums.ParseMode.HTML, disable_web_page_preview=True)
-        await asyncio.sleep(3)
-else:
-    mention_chunks = [", ".join(mentions[i:i + 10]) for i in range(0, len(mentions), 10)]
-    for chunk in mention_chunks:
-        full_message = chunk
-        await client.send_message(chat.id, full_message, disable_web_page_preview=True, parse_mode=enums.ParseMode.HTML)
-        await asyncio.sleep(3)
+        mention_chunks = [", ".join(mentions[i:i + 10]) for i in range(0, len(mentions), 10)]
+        
+        if len(command_parts) > 1:
+            custom_message = command_parts[1]
+            for chunk in mention_chunks:
+                full_message = f"{custom_message}\n\n{chunk}"
+                await message.reply(full_message, parse_mode=enums.ParseMode.HTML, disable_web_page_preview=True)
+                await asyncio.sleep(3)
+        else:
+            for chunk in mention_chunks:
+                await client.send_message(chat.id, chunk, disable_web_page_preview=True, parse_mode=enums.ParseMode.HTML)
+                await asyncio.sleep(3)
+
+    except Exception as e:
+        logger.error(f"An error occurred: {e}")
+
 
 
 
