@@ -42,6 +42,43 @@ app = Client("TGBot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
 
 
 
+
+@app.on_message(filters.command("restart") & filters.private & filters.user(OWNER_ID))
+async def update_and_restart(client, message):
+    # Notify the user that the update process has started
+    response = await message.reply_text("Updating and restarting the bot...")
+
+     # Call the Bash script
+    subprocess.Popen(["/bin/bash", "restart.sh"])
+    
+    # Optionally, delete the initial message to clean up the chat
+    await response.delete()
+
+    # Notify the user that the bot is being updated
+    await message.reply_text("Bot is being updated and will restart shortly.")
+
+
+    
+async def is_user_admin(chat_id, user_id):
+    try:
+        chat_member = await app.get_chat_member(chat_id, user_id)
+        status = chat_member.status
+        logger.info(f"Fetched chat member status: {status} for user_id: {user_id}")
+
+        if status in {enums.ChatMemberStatus.ADMINISTRATOR, enums.ChatMemberStatus.OWNER}:
+            return True
+        return False
+    except Exception as e:
+        logger.error(f"Error fetching chat member status for user_id {user_id}: {e}")
+        return False
+
+PM_START = InlineKeyboardMarkup(
+    [[
+        InlineKeyboardButton('Start Me ▶️', url='https://t.me/TG_GroupMentionBot?start=start')
+    ]]
+)
+
+
 @app.on_message(filters.command("mention") & filters.group)
 async def mention(client, message):
     user = message.from_user
