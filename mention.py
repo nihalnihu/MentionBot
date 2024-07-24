@@ -79,11 +79,13 @@ PM_START = InlineKeyboardMarkup(
 )
 
 
+
 @app.on_message(filters.command("mention") & filters.group)
 async def mention(client, message):
     user = message.from_user
     chat = message.chat
     mention = user.mention
+
     if not already_db(user.id):
         GOM_PM = await message.reply_text(
             text=f"Hey {mention}❗ First Start Me In PM",
@@ -94,10 +96,9 @@ async def mention(client, message):
         await GOM_PM.delete()
         await message.delete()
         return
-        
+
     add_group(chat.id)
-    
-    
+
     logger.info(f"Chat ID: {chat.id}, User ID: {user.id}")
 
     is_admin = await is_user_admin(chat.id, user.id)
@@ -119,17 +120,15 @@ async def mention(client, message):
 
     if len(command_parts) > 1:
         custom_message = command_parts[1]
-        mention_chunks = [", ".join(mentions[i:i + 10]) for i in range(0, len(mentions), 10)]
-        for chunk in mention_chunks:
-            full_message = f"{custom_message}\n\n{chunk}"
-            await client.send_message(chat.id, full_message, parse_mode=enums.ParseMode.HTML)
-            await asyncio.sleep(3)
     else:
-        mention_chunks = [", ".join(mentions[i:i + 10]) for i in range(0, len(mentions), 10)]
-        for chunk in mention_chunks:
-            full_message = chunk
-            await client.send_message(chat.id, full_message, disable_web_page_preview=True, parse_mode=enums.ParseMode.HTML)
-            await asyncio.sleep(3)
+        custom_message = ""  # Handle the case when no custom message is provided
+
+    mention_chunks = [", ".join(mentions[i:i + 10]) for i in range(0, len(mentions), 10)]
+    for chunk in mention_chunks:
+        full_message = f"{custom_message}\n\n{chunk}" if custom_message else chunk
+        await client.send_message(chat.id, full_message, parse_mode=enums.ParseMode.HTML)
+        await asyncio.sleep(3)
+
 
 
 
