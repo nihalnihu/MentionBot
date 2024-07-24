@@ -39,98 +39,50 @@ def run_flask():
 app = Client("TGBot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
 
 
-@app.on_message(filters.command("restart") & filters.private & filters.user(OWNER_ID))
-async def update_and_restart(client, message):
-    # Notify the user that the update process has started
-    response = await message.reply_text("Updating and restarting the bot...")
 
-     # Call the Bash script
-    subprocess.Popen(["/bin/bash", "restart.sh"])
+
+
+
+@app.on_message(filters.command("mention") & filters.group) async def mention(client, message): user = message.from_user chat = message.chat mention = user.mention if not already_db(user.id): GOM_PM = await message.reply_text( text=f"Hey {mention}❗ First Start Me In PM", reply_markup=PM_START )await asyncio.sleep(60)
+    await GOM_PM.delete()
+    await message.delete()
+    return
     
-    # Optionally, delete the initial message to clean up the chat
-    await response.delete()
-
-    # Notify the user that the bot is being updated
-    await message.reply_text("Bot is being updated and will restart shortly.")
+add_group(chat.id)
 
 
-    
-async def is_user_admin(chat_id, user_id):
-    try:
-        chat_member = await app.get_chat_member(chat_id, user_id)
-        status = chat_member.status
-        logger.info(f"Fetched chat member status: {status} for user_id: {user_id}")
+logger.info(f"Chat ID: {chat.id}, User ID: {user.id}")
 
-        if status in {enums.ChatMemberStatus.ADMINISTRATOR, enums.ChatMemberStatus.OWNER}:
-            return True
-        return False
-    except Exception as e:
-        logger.error(f"Error fetching chat member status for user_id {user_id}: {e}")
-        return False
+is_admin = await is_user_admin(chat.id, user.id)
+logger.info(f"User admin status: {is_admin}")
 
-PM_START = InlineKeyboardMarkup(
-    [[
-        InlineKeyboardButton('Start Me ▶️', url='https://t.me/TG_GroupMentionBot?start=start')
-    ]]
-)
+if not is_admin:
+    await message.delete()
+    return
 
+command_parts = message.text.split(maxsplit=1)
+mentions = []
 
+async for member in app.get_chat_members(chat.id):
+    if not member.user.is_bot:
+        if member.user.username:
+            mentions.append(f"@{member.user.username}")
+        else:
+            mentions.append(f"[{member.user.first_name}](tg://user?id={member.user.id})")
 
-
-
-@app.on_message(filters.command("mention") & filters.group)
-async def mention(client, message):
-    user = message.from_user
-    chat = message.chat
-    mention = user.mention
-
-    if not already_db(user.id):
-        GOM_PM = await message.reply_text(
-            text=f"Hey {mention}❗ First Start Me In PM",
-            reply_markup=PM_START
-        )
-
-        await asyncio.sleep(60)
-        await GOM_PM.delete()
-        await message.delete()
-        return
-
-    add_group(chat.id)
-    
-    logger.info(f"Chat ID: {chat.id}, User ID: {user.id}")
-
-    is_admin = await is_user_admin(chat.id, user.id)
-    logger.info(f"User admin status: {is_admin}")
-
-    if not is_admin:
-        await message.delete()
-        return
-
-    command_parts = message.text.split(maxsplit=1)
-    mentions = []
-
-    async for member in app.get_chat_members(chat.id):
-        if not member.user.is_bot:
-            if member.user.username:
-                mentions.append(f"@{member.user.username}")
-            else:
-                mentions.append(f"[{member.user.first_name}](tg://user?id={member.user.id})")
-
-    if len(command_parts) > 1:
-        custom_message = command_parts[1]
-        # Escape special characters for MarkdownV2
-        escaped_message = custom_message.replace('|', '\\|').replace('_', '\\_').replace('*', '\\*').replace('[', '\\[').replace(']', '\\]').replace('(', '\\(').replace(')', '\\)').replace('`', '\\`')
-        mention_chunks = [", ".join(mentions[i:i + 10]) for i in range(0, len(mentions), 10)]
-        for chunk in mention_chunks:
-            full_message = f"{escaped_message}\n\n{chunk}"
-            await message.reply(full_message, parse_mode=enums.ParseMode.MARKDOWN, disable_web_page_preview=True)
-            await asyncio.sleep(3)
-    else:
-        mention_chunks = [", ".join(mentions[i:i + 10]) for i in range(0, len(mentions), 10)]
-        for chunk in mention_chunks:
-            full_message = chunk
-            await client.send_message(chat.id, full_message, disable_web_page_preview=True, parse_mode=enums.ParseMode.MARKDOWN)
-            await asyncio.sleep(3)
+if len(command_parts) > 1:
+    custom_message = command_parts[1]
+    mention_chunks = [", ".join(mentions[i:i + 10]) for i in range(0, len(mentions), 10)]
+    for chunk in mention_chunks:
+        full_message = f"{custom_message}\n\n{chunk}"
+        await message.reply(full_message, parse_mode=enums.ParseMode.HTML, disable_web_page_preview=True)
+        await asyncio.sleep(3)
+else:
+    mention_chunks = [", ".join(mentions[i:i + 10]) for i in range(0, len(mentions), 10)]
+    for chunk in mention_chunks:
+        full_message = chunk
+        await client.send_message(chat.id, full_message, disable_web_page_preview=True, parse_mode=enums.ParseMode.HTML)
+        await asyncio.sleep(3)
 
 
 
