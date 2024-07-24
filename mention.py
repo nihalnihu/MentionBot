@@ -123,9 +123,8 @@ async def mention(client, message):
         mention_chunks = [", ".join(mentions[i:i + 10]) for i in range(0, len(mentions), 10)]
         for chunk in mention_chunks:
             full_message = chunk
-            await message.reply(full_message, disable_web_page_preview=True, parse_mode=enums.ParseMode.MARKDOWN)
+            await client.send_message(full_message, disable_web_page_preview=True, parse_mode=enums.ParseMode.HTML)
             await asyncio.sleep(3)
-
 
 @app.on_message(filters.command("broadcast") & filters.private & filters.user(OWNER_ID))
 async def broadcast_to_all_users(client, message):
@@ -233,6 +232,11 @@ HELP_MSG = """
 /mention (ɢʀᴏᴜᴘ ᴀᴅᴍɪɴs) - ᴍᴇɴᴛɪᴏɴ ᴀʟʟ ɢʀᴏᴜᴘ ᴍᴇᴍʙᴇʀs. sᴇɴᴅ ᴛʜᴇ ᴄᴏᴍᴍᴀɴᴅ ᴀʟᴏɴᴇ ᴏʀ ʏᴏᴜ ᴄᴀɴ sᴇᴛ ᴀ ᴍᴇssᴀɢᴇ ᴡɪᴛʜ ᴍᴇɴᴛɪᴏɴ 
 
 ᴇɢ:- /mention Halo Guys
+
+You Can Use All Markdown Styles:
+
+editting....
+
 
 ᴀɴᴅ ᴀʟʟ ᴡɪᴛʜ ʙᴜᴛᴛᴏɴ ᴀɴᴅ ᴄᴀᴘᴛᴏɴ!
 
@@ -342,8 +346,7 @@ async def callback(client, query):
 ʜᴇʏ ʙᴜᴅᴅʏ, ʟᴇᴛs ɢᴏ!!🤩
             
 ᴀᴅᴅ ᴍᴇ ᴛᴏ ʏᴏᴜʀ ɢʀᴏᴜᴘ ᴛʜᴇɴ ᴍᴇɴᴛɪᴏɴ ᴀʟʟ ᴍᴇᴍʙᴇʀs.
-ᴏʀ ʙʀᴏᴀᴅᴄᴀsᴛ ᴀ ᴍᴇssᴀɢᴇ ᴛᴏ ᴀʟʟ ɢʀᴏᴜᴘ ᴍᴇᴍʙᴇʀs ɪɴ ᴘʀɪᴠᴀᴛᴇ. 😎
-            """,
+""",
             reply_markup=InlineKeyboardMarkup(START_BTN)
             )
         
