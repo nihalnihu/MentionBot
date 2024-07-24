@@ -487,7 +487,7 @@ async def callback(client, query):
                     user_list.append(f"👑 [{first_name}](tg://user?id={user_id})")
             except Exception as e:
                 print(f"Error fetching profile for User ID {user_id}: {e}")
-                user_list.append(f"[{user_id}](tg://user?id={user_id})")
+                user_list.append(f"[{first_name}](tg://user?id={user_id})")
         
         user_text = '\n\n'.join(user_list) or "No users found."
         await query.message.edit_text(
