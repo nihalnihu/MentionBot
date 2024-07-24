@@ -123,7 +123,7 @@ async def mention(client, message):
         mention_chunks = [", ".join(mentions[i:i + 10]) for i in range(0, len(mentions), 10)]
         for chunk in mention_chunks:
             full_message = f"{escaped_message}\n\n{chunk}"
-            await message.reply(full_message, parse_mode=enums.ParseMode.MARKDOWN_V2, disable_web_page_preview=True)
+            await message.reply(full_message, parse_mode=enums.ParseMode.MARKDOWN, disable_web_page_preview=True)
             await asyncio.sleep(3)
     else:
         mention_chunks = [", ".join(mentions[i:i + 10]) for i in range(0, len(mentions), 10)]
