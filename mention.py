@@ -483,12 +483,9 @@ async def callback(client, query):
                 first_name = user_profile.first_name
                 if username:
                     user_list.append(f"👑 [{username}](https://t.me/{username})")
-                else:
-                    user_list.append(f"👑 [{first_name}](tg://user?id={user_id})")
-                elif:
-                    user_list.append(f"{user_id} - error")
             except Exception as e:
                 print(f"Error fetching profile for User ID {user_id}: {e}")
+                user_list.append(f"{user_id} - error")
         
         user_text = '\n\n'.join(user_list) or "No users found."
         await query.message.edit_text(
