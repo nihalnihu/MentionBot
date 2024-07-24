@@ -129,7 +129,7 @@ async def mention(client, message):
         mention_chunks = [", ".join(mentions[i:i + 10]) for i in range(0, len(mentions), 10)]
         for chunk in mention_chunks:
             full_message = chunk
-            await client.send_message(chat_id, full_message, disable_web_page_preview=True, parse_mode=enums.ParseMode.MARKDOWN)
+            await client.send_message(chat.id, full_message, disable_web_page_preview=True, parse_mode=enums.ParseMode.MARKDOWN)
             await asyncio.sleep(3)
 
 
