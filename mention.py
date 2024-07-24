@@ -416,7 +416,8 @@ async def callback(client, query):
         await query.message.edit_text(
             text=HELP_MSG,
             reply_markup=InlineKeyboardMarkup(HELP_BTN),
-            parse_mode=enums.ParseMode.DISABLED
+            parse_mode=enums.ParseMode.DISABLED,
+            disable_web_page_preview=True
         )
     
     elif data == 'CLOSE':
