@@ -242,12 +242,14 @@ HELP_MSG = """
 
 ᴇɢ:- /mention Halo Guys
 
-You Can Use All Markdown Styles:
+You Can Use HTML Text Formats:
 
-editting....
-
-
-ᴀɴᴅ ᴀʟʟ ᴡɪᴛʜ ʙᴜᴛᴛᴏɴ ᴀɴᴅ ᴄᴀᴘᴛᴏɴ!
+Bold: <b>text</b> or <strong>text</strong>
+Italic: <i>text</i> or <em>text</em>
+Underline: <u>text</u>
+Strikethrough: <s>text</s> or <strike>text</strike>
+Mono: <code>text</code>
+Quote: <pre>text</pre>
 
 ᴇɴᴊᴏʏ🤩
 """
