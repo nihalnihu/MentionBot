@@ -117,13 +117,13 @@ async def mention(client, message):
         mention_chunks = [", ".join(mentions[i:i + 10]) for i in range(0, len(mentions), 10)]
         for chunk in mention_chunks:
             full_message = f"{custom_message}\n\n{chunk}"
-            await message.reply(full_message)
+            await message.reply(full_message, parse_mode=enums.ParseMode.MARKDOWN, disable_web_page_preview=True)
             await asyncio.sleep(3)
     else:
         mention_chunks = [", ".join(mentions[i:i + 10]) for i in range(0, len(mentions), 10)]
         for chunk in mention_chunks:
             full_message = chunk
-            await message.reply(full_message, disable_web_page_preview=True)
+            await message.reply(full_message, disable_web_page_preview=True, parse_mode=enums.ParseMode.MARKDOWN)
             await asyncio.sleep(3)
 
 
@@ -487,7 +487,6 @@ async def callback(client, query):
                     user_list.append(f"👑 [{first_name}](tg://user?id={user_id})")
             except Exception as e:
                 print(f"Error fetching profile for User ID {user_id}: {e}")
-                user_list.append(f"User ID {user_id} (Error fetching profile)")
         
         user_text = '\n\n'.join(user_list) or "No users found."
         await query.message.edit_text(
