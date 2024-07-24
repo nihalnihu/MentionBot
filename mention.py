@@ -74,11 +74,15 @@ PM_START = InlineKeyboardMarkup(
     ]]
 )
 
+
+
+
 @app.on_message(filters.command("mention") & filters.group)
 async def mention(client, message):
     user = message.from_user
     chat = message.chat
     mention = user.mention
+
     if not already_db(user.id):
         GOM_PM = await message.reply_text(
             text=f"Hey {mention}❗ First Start Me In PM",
@@ -91,7 +95,6 @@ async def mention(client, message):
         return
         
     add_group(chat.id)
-    
     
     logger.info(f"Chat ID: {chat.id}, User ID: {user.id}")
 
@@ -117,7 +120,7 @@ async def mention(client, message):
         mention_chunks = [", ".join(mentions[i:i + 10]) for i in range(0, len(mentions), 10)]
         for chunk in mention_chunks:
             full_message = f"{custom_message}\n\n{chunk}"
-            await message.reply(full_message, parse_mode=enums.ParseMode.MARKDOWN, disable_web_page_preview=True)
+            await message.reply(full_message, parse_mode=enums.ParseMode.HTML, disable_web_page_preview=True)
             await asyncio.sleep(3)
     else:
         mention_chunks = [", ".join(mentions[i:i + 10]) for i in range(0, len(mentions), 10)]
@@ -125,6 +128,9 @@ async def mention(client, message):
             full_message = chunk
             await client.send_message(chat.id, full_message, disable_web_page_preview=True, parse_mode=enums.ParseMode.HTML)
             await asyncio.sleep(3)
+
+
+
 
 @app.on_message(filters.command("broadcast") & filters.private & filters.user(OWNER_ID))
 async def broadcast_to_all_users(client, message):
