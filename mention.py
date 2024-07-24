@@ -77,6 +77,7 @@ PM_START = InlineKeyboardMarkup(
 
 
 
+
 @app.on_message(filters.command("mention") & filters.group)
 async def mention(client, message):
     user = message.from_user
@@ -93,7 +94,7 @@ async def mention(client, message):
         await GOM_PM.delete()
         await message.delete()
         return
-        
+
     add_group(chat.id)
     
     logger.info(f"Chat ID: {chat.id}, User ID: {user.id}")
@@ -117,17 +118,20 @@ async def mention(client, message):
 
     if len(command_parts) > 1:
         custom_message = command_parts[1]
+        # Escape special characters for MarkdownV2
+        escaped_message = custom_message.replace('|', '\\|').replace('_', '\\_').replace('*', '\\*').replace('[', '\\[').replace(']', '\\]').replace('(', '\\(').replace(')', '\\)').replace('`', '\\`')
         mention_chunks = [", ".join(mentions[i:i + 10]) for i in range(0, len(mentions), 10)]
         for chunk in mention_chunks:
-            full_message = f"{custom_message}\n\n{chunk}"
-            await message.reply(full_message, parse_mode=enums.ParseMode.HTML, disable_web_page_preview=True)
+            full_message = f"{escaped_message}\n\n{chunk}"
+            await message.reply(full_message, parse_mode=enums.ParseMode.MARKDOWN_V2, disable_web_page_preview=True)
             await asyncio.sleep(3)
     else:
         mention_chunks = [", ".join(mentions[i:i + 10]) for i in range(0, len(mentions), 10)]
         for chunk in mention_chunks:
             full_message = chunk
-            await client.send_message(chat.id, full_message, disable_web_page_preview=True, parse_mode=enums.ParseMode.DEFAULT)
+            await client.send_message(chat_id, full_message, disable_web_page_preview=True, parse_mode=enums.ParseMode.MARKDOWN)
             await asyncio.sleep(3)
+
 
 
 
