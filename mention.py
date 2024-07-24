@@ -250,6 +250,7 @@ Underline: <u>text</u>
 Strikethrough: <s>text</s> or <strike>text</strike>
 Mono: <code>text</code>
 Quote: <pre>text</pre>
+Link Text : <a href="https://t.me/TG_BotCreator">Join Now</a>
 
 ᴇɴᴊᴏʏ🤩
 """
