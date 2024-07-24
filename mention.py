@@ -127,124 +127,7 @@ async def mention(client, message):
             await asyncio.sleep(3)
 
 
-
-@app.on_message(filters.command("broadcast") & filters.group)
-async def broadcast_to_members(client, message):
-    chat_id = message.chat.id
-    user_id = message.from_user.id
-    mention = message.from_user.mention
-    failed_count = 0
-    done_count = 0
-    
-    if not already_db(user_id):
-        GO_PM = await message.reply_text(
-            text=f"Hey {mention}❗ First Start Me In PM\n\nDelete In [60](https://t.me/TG_GroupMentionBot?stats=start) Seconds",
-            reply_markup=PM_START
-        )
-        await asyncio.sleep(60)
-        await GO_PM.delete()
-        await message.delete()
-        return
-        
-    add_group(chat_id)
-
-    logger.info(f"Chat ID: {chat_id}, User ID: {user_id}")
-
-    is_admin = await is_user_admin(chat_id, user_id)
-    logger.info(f"User admin status: {is_admin}")
-
-    if not is_admin:
-        await message.delete()
-        return
-
-    if message.reply_to_message:
-        replied_message = message.reply_to_message
-        reply_markup = replied_message.reply_markup
-        text = replied_message.text or ""
-        caption = replied_message.caption or ""
-
-        media_type = None
-        media = None
-
-        if replied_message.photo:
-            media_type = "photo"
-            media = (replied_message.photo.file_id, caption)
-        elif replied_message.video:
-            media_type = "video"
-            media = (replied_message.video.file_id, caption)
-        elif replied_message.sticker:
-            media_type = "sticker"
-            media = (replied_message.sticker.file_id,)
-        else:
-            media_type = "text"
-            media = (text,)
-
-        reply_message = await message.reply(f"Broadcasting {media_type}...")
-
-        async for member in app.get_chat_members(chat_id):
-            if not member.user.is_bot:
-                try:
-                    if media_type == "photo":
-                        if caption and reply_markup:
-                            await client.send_photo(member.user.id, media[0], caption=media[1], reply_markup=reply_markup)
-                        elif caption:
-                            await client.send_photo(member.user.id, media[0], caption=media[1])
-                        elif reply_markup:
-                            await client.send_photo(member.user.id, media[0], reply_markup=reply_markup)
-                        else:
-                            await client.send_photo(member.user.id, media[0])
-                    elif media_type == "video":
-                        if caption and reply_markup:
-                            await client.send_video(member.user.id, media[0], caption=media[1], reply_markup=reply_markup)
-                        elif caption:
-                            await client.send_video(member.user.id, media[0], caption=media[1])
-                        elif reply_markup:
-                            await client.send_video(member.user.id, media[0], reply_markup=reply_markup)
-                        else:
-                            await client.send_video(member.user.id, media[0])
-                    elif media_type == "sticker":
-                        if reply_markup:
-                            await client.send_sticker(member.user.id, media[0], reply_markup=reply_markup)
-                        else:
-                            await client.send_sticker(member.user.id, media[0])
-                    elif media_type == "text":
-                        if reply_markup:
-                            await client.send_message(member.user.id, media[0], reply_markup=reply_markup)
-                        else:
-                            await client.send_message(member.user.id, media[0])
-                    done_count += 1
-                    await asyncio.sleep(1)  # To avoid hitting rate limits
-                except Exception as e:
-                    failed_count += 1
-                    logger.error(f"Failed to send {media_type} to user {member.user.id}: {e}")
-
-        await reply_message.edit(f"Type: {media_type}\nTotal Members: {done_count + failed_count}\n\nSuccess {done_count}\nFailed: {failed_count}")
-
-    else:
-        command_parts = message.text.split(maxsplit=1)
-
-        if len(command_parts) > 1:
-            custom_message = command_parts[1]
-            reply_message = await message.reply("Broadcasting text message...")
-
-            async for member in app.get_chat_members(chat_id):
-                if not member.user.is_bot:
-                    try:
-                        await client.send_message(member.user.id, custom_message, disable_web_page_preview=True)
-                        done_count += 1
-                        await asyncio.sleep(1)
-                    except Exception as e:
-                        failed_count += 1
-                        logger.error(f"Failed to send message to user {member.user.id}: {e}")
-
-            await reply_message.edit(f"Type: Text\nTotal Members: {done_count + failed_count}\n\nSuccess: {done_count}\nFailed: {failed_count}")
-
-        else:
-            await message.reply("Use: /broadcast <message> or reply to a photo, video, or sticker")
-
-
-
-@app.on_message(filters.command("bc") & filters.private & filters.user(OWNER_ID))
+@app.on_message(filters.command("broadcast") & filters.private & filters.user(OWNER_ID))
 async def broadcast_to_all_users(client, message):
     command_parts = message.text.split(maxsplit=1)
     failed_count = 0
@@ -279,18 +162,18 @@ async def broadcast_to_all_users(client, message):
             try:
                 if media_type == "photo":
                     if caption and reply_markup:
-                        await client.send_photo(user_id, media[0], caption=media[1], reply_markup=reply_markup)
+                        await client.send_photo(user_id, media[0], caption=media[1], reply_markup=reply_markup, parse_mode=enums.ParseMode.MARKDOWN)
                     elif caption:
-                        await client.send_photo(user_id, media[0], caption=media[1])
+                        await client.send_photo(user_id, media[0], caption=media[1], parse_mode=enums.ParseMode.MARKDOWN)
                     elif reply_markup:
                         await client.send_photo(user_id, media[0], reply_markup=reply_markup)
                     else:
                         await client.send_photo(user_id, media[0])
                 elif media_type == "video":
                     if caption and reply_markup:
-                        await client.send_video(user_id, media[0], caption=media[1], reply_markup=reply_markup)
+                        await client.send_video(user_id, media[0], caption=media[1], reply_markup=reply_markup, parse_mode=enums.ParseMode.MARKDOWN)
                     elif caption:
-                        await client.send_video(user_id, media[0], caption=media[1])
+                        await client.send_video(user_id, media[0], caption=media[1], parse_mode=enums.ParseMode.MARKDOWN)
                     elif reply_markup:
                         await client.send_video(user_id, media[0], reply_markup=reply_markup)
                     else:
@@ -302,9 +185,9 @@ async def broadcast_to_all_users(client, message):
                         await client.send_sticker(user_id, media[0])
                 elif media_type == "text":
                     if reply_markup:
-                        await client.send_message(user_id, media[0], reply_markup=reply_markup)
+                        await client.send_message(user_id, media[0], reply_markup=reply_markup, parse_mode=enums.ParseMode.MARKDOWN)
                     else:
-                        await client.send_message(user_id, media[0])
+                        await client.send_message(user_id, media[0], parse_mode=enums.ParseMode.MARKDOWN)
                 done_count += 1
                 await asyncio.sleep(1)  # To avoid hitting rate limits
             except Exception as e:
@@ -320,7 +203,7 @@ async def broadcast_to_all_users(client, message):
             user_ids = get_all_user_ids()
             for user_id in user_ids:
                 try:
-                    await client.send_message(user_id, custom_message, disable_web_page_preview=True)
+                    await client.send_message(user_id, custom_message, disable_web_page_preview=True, parse_mode=enums.ParseMode.MARKDOWN)
                     done_count += 1
                     await asyncio.sleep(1)
                 except Exception as e:
@@ -345,21 +228,11 @@ HELP_MSG = """
 
 ʏᴏᴜ ᴄᴀɴ ᴏɴʟʏ ᴜsᴇ ᴍᴇ ɪɴ ʏᴏᴜʀ ɢʀᴏᴜᴘ ☺︎︎
 
-✍️ ɢʀᴏᴜᴘ ᴄᴏᴍᴍᴀɴᴅs:
+✍️ ɢʀᴏᴜᴘ ᴄᴏᴍᴍᴀɴᴅ:
 
 /mention (ɢʀᴏᴜᴘ ᴀᴅᴍɪɴs) - ᴍᴇɴᴛɪᴏɴ ᴀʟʟ ɢʀᴏᴜᴘ ᴍᴇᴍʙᴇʀs. sᴇɴᴅ ᴛʜᴇ ᴄᴏᴍᴍᴀɴᴅ ᴀʟᴏɴᴇ ᴏʀ ʏᴏᴜ ᴄᴀɴ sᴇᴛ ᴀ ᴍᴇssᴀɢᴇ ᴡɪᴛʜ ᴍᴇɴᴛɪᴏɴ 
 
 ᴇɢ:- /mention Halo Guys
-
-/broadcast (ɢʀᴏᴜᴘ ᴀᴅᴍɪɴs) - sᴇɴᴅ ᴀ ᴍᴇssᴀɢᴇ ᴛᴏ ᴀʟʟ ɢʀᴏᴜᴘ ᴍᴇᴍʙᴇʀs (ᴘʀɪᴠᴀᴛʟʏ)
-
-ᴇɢ:- /broadcast Halo Guys
-
-‌ｏｒ ʀᴇᴘʟʏ ᴛᴏ ᴀɴʏ ᴘᴏsᴛs. 
-
-❕sᴜᴘᴘᴏʀᴛᴇᴅ:
-
-ᴛᴇxᴛs, ᴘʜᴏᴛᴏs, ᴠɪᴅᴇᴏs, sᴛɪᴄᴋᴇʀs.
 
 ᴀɴᴅ ᴀʟʟ ᴡɪᴛʜ ʙᴜᴛᴛᴏɴ ᴀɴᴅ ᴄᴀᴘᴛᴏɴ!
 
@@ -377,9 +250,11 @@ HELP_BTN =  [[
             
 
 START_TXT = """
+
 ʜʏ {},👋
 
-ᴛʜɪs ɪs ᴀ ᴍᴇɴᴛɪᴏɴ ʙᴏᴛ. ɪɴ ᴛʜɪs ʙᴏᴛ ʏᴏᴜ ᴄᴀɴ ᴍᴇɴᴛɪᴏɴ ᴀʟʟ ɢʀᴏᴜᴘ ᴍᴇᴍʙᴇʀs ᴀɴᴅ ᴀʟsᴏ ʏᴏᴜ ᴄᴀɴ sᴇɴᴅ ᴀ ʙʀᴏᴀᴅᴄᴀsᴛ ᴍᴇssᴀɢᴇ ᴛᴏ ᴀʟʟ ɢʀᴏᴜᴘ ᴍᴇᴍʙᴇʀs ɪɴ ᴘʀɪᴠᴀᴛᴇ.
+ 
+ᴛʜɪs ɪs ᴀ ᴍᴇɴᴛɪᴏɴ ʙᴏᴛ. ɪɴ ᴛʜɪs ʙᴏᴛ ʏᴏᴜ ᴄᴀɴ ᴍᴇɴᴛɪᴏɴ ᴀʟʟ ɢʀᴏᴜᴘ ᴍᴇᴍʙᴇʀs.
 
 ᴄʟɪᴄᴋ ᴛʜᴇ ʜᴇʟᴘ ʙᴜᴛᴛᴏɴ ᴛᴏ ᴋɴᴏᴡ ᴍᴏʀᴇ!!
 
